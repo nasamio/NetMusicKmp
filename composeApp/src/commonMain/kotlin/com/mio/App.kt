@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mio.pages.HomeUi
 import com.mio.pages.MineUi
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
 
@@ -21,8 +22,6 @@ import java.lang.ref.WeakReference
 fun App() {
     MaterialTheme {
         MainUi()
-
-
     }
 }
 
@@ -51,6 +50,8 @@ fun MainUi() {
 
 object AppHelper {
     lateinit var navController: WeakReference<NavController>
+    val cookie = MutableStateFlow("")
+
 
     // 路由定义
     val pages = mutableMapOf<String, @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit>(
