@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.*
 /**
  * 网络请求 使用ktor进行网络请求
  */
-object NetHelper {
+object KtorHelper {
     const val BASE_URL = "1.94.134.14"
     const val PORT = 3001
 
@@ -56,7 +56,7 @@ object NetHelper {
         }.catch { throwable: Throwable ->
             logError("Error occurred during network request", throwable)
         }.onCompletion { cause ->
-            close()
+//            close()
         }.flowOn(Dispatchers.Default)
     }
 
@@ -76,7 +76,7 @@ object NetHelper {
         }.catch { throwable: Throwable ->
             logError("Error occurred during network request", throwable)
         }.onCompletion { cause ->
-            close()
+//            close()
         }.flowOn(Dispatchers.Default)
     }
 
@@ -147,3 +147,5 @@ object NetHelper {
         ),
     )
 }
+
+fun Int.isOk() = this == 200

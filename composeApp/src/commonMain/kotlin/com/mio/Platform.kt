@@ -12,3 +12,9 @@ expect fun getPlatform(): Platform
 expect fun httpClient(config: HttpClientConfig<*>.() -> Unit = {}): HttpClient
 
 expect fun toast(msg: String)
+
+expect fun logcat(msg: String)
+
+expect fun saveString(key: String, value: String)
+
+expect fun getString(key: String, default: String): String
