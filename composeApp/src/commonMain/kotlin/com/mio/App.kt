@@ -23,6 +23,7 @@ import com.mio.bean.Account
 import com.mio.bean.Playlist
 import com.mio.bean.Profile
 import com.mio.pages.HomeUi
+import com.mio.pages.LeftTabUi
 import com.mio.pages.LoginUi
 import com.mio.pages.MineUi
 import com.mio.utils.KtorHelper
@@ -148,7 +149,8 @@ fun LeftTab(modifier: Modifier) {
         modifier = modifier,
         contentAlignment = androidx.compose.ui.Alignment.Center
     ) {
-        Text(text = "左侧tab", color = Color.Black)
+//        Text(text = "左侧tab", color = Color.Black)
+        LeftTabUi()
     }
 }
 
