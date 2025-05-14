@@ -23,7 +23,7 @@ import com.mio.bean.Account
 import com.mio.bean.Playlist
 import com.mio.bean.Profile
 import com.mio.pages.HomeUi
-import com.mio.pages.LeftTabUi
+import com.mio.pages.leftTabUi
 import com.mio.pages.LoginUi
 import com.mio.pages.MineUi
 import com.mio.utils.KtorHelper
@@ -67,8 +67,8 @@ fun MainUi() {
                 val hasLogin = it.code.isOk() && it.data?.account != null && it.data.profile != null
 
                 if (hasLogin) {
-                    AppHelper.account.value = it.data?.account
-                    AppHelper.profile.value = it.data?.profile
+                    AppHelper.account.value = it.data.account
+                    AppHelper.profile.value = it.data.profile
                     toast("登录成功")
                 }
                 startDestination = if (hasLogin) "home" else "login"
@@ -147,10 +147,10 @@ fun RightTop(modifier: Modifier) {
 fun LeftTab(modifier: Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = androidx.compose.ui.Alignment.Center
+        contentAlignment = Alignment.Center
     ) {
 //        Text(text = "左侧tab", color = Color.Black)
-        LeftTabUi()
+        leftTabUi()
     }
 }
 
