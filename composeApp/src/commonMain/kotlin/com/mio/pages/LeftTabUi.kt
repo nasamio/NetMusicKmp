@@ -24,7 +24,7 @@ fun leftTabUi() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        tabSubItemUi("Miosic", Res.drawable.jp_main, 28.sp, 48.dp)
+        tabTitleSubItemUi("Miosic", Res.drawable.jp_main, 28.sp, 48.dp)
         tabGroupUi {
             tabSubItemUi("推荐", Res.drawable.ic_recommand)
             tabSubItemUi("漫游", Res.drawable.ic_radio)
@@ -70,7 +70,8 @@ fun tabSubItemUi(
         modifier = Modifier.fillMaxWidth(),
         onClick = {
             logcat("left tab click")
-        }
+        },
+        borderStroke = null
     )
     {
         Row(
@@ -91,5 +92,32 @@ fun tabSubItemUi(
             )
         }
     }
+}
 
+@Composable
+fun tabTitleSubItemUi(
+    text: String,
+    res: DrawableResource = Res.drawable.ic_void,
+    fSize: TextUnit = 14.sp,
+    iSize: Dp = 16.dp,
+    modifier: Modifier = Modifier
+)
+{
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),  // 图标和文本间隔8dp
+        modifier = modifier.padding(4.dp)
+    ) {
+        Icon(
+            painter = painterResource(res),
+            contentDescription = text,  // 用 text 作为描述更语义化
+            tint = Color.Unspecified,
+            modifier = Modifier.size(iSize)
+        )
+        Text(
+            text = text,
+            fontSize = fSize,
+            modifier = Modifier.offset(y = (-2).dp)
+        )
+    }
 }
