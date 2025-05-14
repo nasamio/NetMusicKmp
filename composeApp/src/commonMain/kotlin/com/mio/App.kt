@@ -1,12 +1,16 @@
 package com.mio
 
+import HoveredBox
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -24,6 +28,9 @@ import com.mio.pages.MineUi
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import kotlinx.coroutines.flow.MutableStateFlow
+import netmusickmp.composeapp.generated.resources.Res
+import netmusickmp.composeapp.generated.resources.ic_back
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
 
@@ -96,18 +103,42 @@ fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
                 .background(Color(0xfff7f9fc))
         ) {
             // 顶部区域 搜索 头像 等
-            Row(
+            RightTop(
                 modifier = Modifier.fillMaxWidth()
                     .height(72.dp)
                     .border(1.dp, Color.Gray)
-            ) {
-
-            }
+            )
 
             // 内容区域
             // 页面导航
             NavContent(hasJudgeLogin, startDestination)
         }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun RightTop(modifier: Modifier) {
+    Row(
+        modifier = modifier.padding(horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        HoveredBox(
+            modifier = Modifier.width(27.dp)
+                .height(36.dp),
+            onClick = {
+                logcat("点击了菜单")
+            }
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_back),
+                contentDescription = "Menu",
+                tint = Color.Black.copy(alpha = .5f),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
     }
 }
 
