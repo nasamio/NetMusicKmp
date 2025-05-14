@@ -2,13 +2,14 @@ package com.mio
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -69,14 +70,60 @@ fun MainUi() {
             }
         }
 
-        // 页面导航
-        NavContent(hasJudgeLogin, startDestination)
+        AppContainer(hasJudgeLogin, startDestination)
 
         // 其他内容 一般用于页面上物
 
     }
 }
 
+@Composable
+fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        // 左侧tab
+        LeftTab(
+            modifier = Modifier.width(200.dp)
+                .fillMaxHeight()
+                .background(Color(0xfff0f3f6))
+        )
+
+        // 右侧内容
+        Column(
+            modifier = Modifier.fillMaxHeight()
+                .weight(1f)
+                .background(Color(0xfff7f9fc))
+        ) {
+            // 顶部区域 搜索 头像 等
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .height(72.dp)
+                    .border(1.dp, Color.Gray)
+            ) {
+
+            }
+
+            // 内容区域
+            // 页面导航
+            NavContent(hasJudgeLogin, startDestination)
+        }
+    }
+}
+
+@Composable
+fun LeftTab(modifier: Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = androidx.compose.ui.Alignment.Center
+    ) {
+        Text(text = "左侧tab", color = Color.Black)
+    }
+}
+
+/**
+ * 导航区域
+ */
 @Composable
 fun NavContent(showContent: Boolean, startDestination: String) {
     val navController = rememberNavController()
@@ -90,7 +137,7 @@ fun NavContent(showContent: Boolean, startDestination: String) {
             ) {
                 AppHelper.pages.forEach { (route, content) ->
                     composable(route) {
-                        content(navController.currentBackStackEntry!!)
+                        navController.currentBackStackEntry?.let { it1 -> content(it1) }
                     }
                 }
             }
@@ -99,6 +146,7 @@ fun NavContent(showContent: Boolean, startDestination: String) {
         }
     }
 }
+
 @Composable
 fun LoadingUi() {
     // 加载中界面可选
@@ -117,6 +165,7 @@ fun LoadingUi() {
         Text(text = "加载中...")
     }
 }
+
 object AppHelper {
     lateinit var navController: WeakReference<NavController>
     val cookie = MutableStateFlow("")
