@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
@@ -58,5 +59,52 @@ fun HoveredBox(
         contentAlignment = Alignment.Center,
     ) {
         content()
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun HoveredIcon(
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(6.dp),
+    hoverColor: Color = Color(0xffe2e5e9),                   // 背景色
+    hoverTint: Color = Color.Gray.copy(alpha = .8f),                            // 悬停时图标颜色
+    normalTint: Color = Color.Gray.copy(alpha = .6f),                    // 正常时图标颜色
+    onClick: () -> Unit = {},
+) {
+    val hovered = remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { onClick() })
+            }
+            .pointerMoveFilter(
+                onEnter = {
+                    hovered.value = true
+                    false
+                },
+                onExit = {
+                    hovered.value = false
+                    false
+                }
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        androidx.compose.foundation.Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier,
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                if (hovered.value) hoverTint else normalTint
+            )
+        )
     }
 }
