@@ -125,7 +125,6 @@ fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
             RightTop(
                 modifier = Modifier.fillMaxWidth()
                     .height(72.dp)
-                    .border(1.dp, Color.Gray)
             )
 
             // 内容区域
