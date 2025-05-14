@@ -17,13 +17,16 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "NetMusicKmp",
         icon = painterResource(Res.drawable.ic_app),
+        undecorated = true,
         state = WindowState(
             size = DpSize(1056.dp, 752.dp),
             position = WindowPosition.Aligned(Alignment.Center)  // 这里设置窗口居中
         ),
     ) {
-        WindowDraggableArea {  }
+        WindowDraggableArea {
+            App()
+        }
 
-        App()
+
     }
 }
