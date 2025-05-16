@@ -42,7 +42,7 @@ fun MainUi() {
         LaunchedEffect(1) {
             // 读取本地之前存的cookie
             AppHelper.cookie.value = getString("cookie", "")
-
+            logcat("cookie: ${AppHelper.cookie.value}")
 
             KtorHelper.loginStatus().collect {
                 logcat("${it.data?.code}${it.data?.account}\n${it.data?.profile}")

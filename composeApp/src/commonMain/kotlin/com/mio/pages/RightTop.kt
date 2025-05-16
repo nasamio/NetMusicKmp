@@ -188,34 +188,34 @@ fun RightTop(modifier: Modifier) {
             }
         )
 
-        margin()
-
-
-        HoveredIcon(
-            painter = painterResource(Res.drawable.ic_min),
-            modifier = Modifier.size(20.dp),
-            onClick = {
-            }
-        )
-
-        margin()
-
-
-        HoveredIcon(
-            painter = painterResource(Res.drawable.ic_max),
-            modifier = Modifier.size(20.dp),
-            onClick = {
-            }
-        )
-
-        margin()
-
-
-        HoveredIcon(
-            painter = painterResource(Res.drawable.ic_close),
-            modifier = Modifier.size(20.dp),
-            onClick = {
-            }
-        )
+//        margin()
+//
+//
+//        HoveredIcon(
+//            painter = painterResource(Res.drawable.ic_min),
+//            modifier = Modifier.size(20.dp),
+//            onClick = {
+//            }
+//        )
+//
+//        margin()
+//
+//
+//        HoveredIcon(
+//            painter = painterResource(Res.drawable.ic_max),
+//            modifier = Modifier.size(20.dp),
+//            onClick = {
+//            }
+//        )
+//
+//        margin()
+//
+//
+//        HoveredIcon(
+//            painter = painterResource(Res.drawable.ic_close),
+//            modifier = Modifier.size(20.dp),
+//            onClick = {
+//            }
+//        )
     }
 }

@@ -146,6 +146,15 @@ object KtorHelper {
             "cookie" to AppHelper.cookie.value,
         ),
     )
+
+    // 日推歌单
+    fun recommendResource() = get<RecommendResourceResponse>(
+        url = "/recommend/resource",
+        params = mapOf(
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
 }
 
 fun Int.isOk() = this == 200

@@ -50,6 +50,10 @@ kotlin {
             implementation(libs.ktor.client.serialization.json)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.io)
+
+            // 取色
+            implementation(libs.kmpalette.core)
+
         }
         androidMain.dependencies {
             implementation(compose.preview)
