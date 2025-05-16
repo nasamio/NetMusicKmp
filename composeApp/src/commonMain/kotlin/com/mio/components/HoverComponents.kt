@@ -21,12 +21,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
 
+val defaultHoveredColor: Color = Color(0xffe2e5e9) // 默认悬停颜色
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HoveredBox(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(6.dp),
-    hoverColor: Color = Color(0xffe2e5e9),
+    hoverColor: Color = defaultHoveredColor,
+    defaultColor: Color = Color.Transparent,
     borderStroke: BorderStroke? = BorderStroke(0.5.dp, Color.Gray.copy(alpha = 0.3f)),
     onClick: () -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
@@ -37,7 +40,7 @@ fun HoveredBox(
         modifier = modifier
             .border(borderStroke ?: BorderStroke(0.dp, Color.Transparent), shape)
             .clip(shape)
-            .background(if (hovered.value) hoverColor else Color.Transparent)
+            .background(if (hovered.value) hoverColor else defaultColor)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { onClick() })
             }

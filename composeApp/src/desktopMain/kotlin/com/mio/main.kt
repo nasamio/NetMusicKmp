@@ -1,7 +1,10 @@
 package com.mio
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.window.WindowDraggableArea
+import androidx.compose.material.Surface
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -23,8 +26,13 @@ fun main() = application {
             position = WindowPosition.Aligned(Alignment.Center)  // 这里设置窗口居中
         ),
     ) {
-        WindowDraggableArea {
-            App()
+        Surface(
+            modifier = Modifier
+        ) {
+            WindowDraggableArea {
+
+                App()
+            }
         }
 
 

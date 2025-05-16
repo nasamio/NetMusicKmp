@@ -11,12 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -37,10 +31,7 @@ import coil3.compose.AsyncImage
 import com.mio.bean.Account
 import com.mio.bean.Playlist
 import com.mio.bean.Profile
-import com.mio.pages.HomeUi
-import com.mio.pages.leftTabUi
-import com.mio.pages.LoginUi
-import com.mio.pages.MineUi
+import com.mio.pages.*
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,7 +63,7 @@ fun MainUi() {
     Box(modifier = Modifier.fillMaxSize()) {
 
         var hasJudgeLogin by remember { mutableStateOf(false) }
-        var startDestination by remember { mutableStateOf("home") }
+        var startDestination by remember { mutableStateOf("recommend") }
 
         LaunchedEffect(1) {
             // 读取本地之前存的cookie
@@ -85,11 +76,11 @@ fun MainUi() {
                 val hasLogin = it.code.isOk() && it.data?.account != null && it.data.profile != null
 
                 if (hasLogin) {
-                    AppHelper.account.value = it.data.account
-                    AppHelper.profile.value = it.data.profile
+                    AppHelper.account.value = it.data?.account
+                    AppHelper.profile.value = it.data?.profile
                     toast("登录成功")
                 }
-                startDestination = if (hasLogin) "home" else "login"
+                startDestination = if (hasLogin) "recommend" else "login"
 
                 AppHelper.isLogin.value = hasLogin
                 hasJudgeLogin = true
@@ -109,7 +100,7 @@ fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
         modifier = Modifier.fillMaxSize(),
     ) {
         // 左侧tab
-        LeftTab(
+        LeftTabUi(
             modifier = Modifier.width(200.dp)
                 .fillMaxHeight()
                 .background(Color(0xfff0f3f6))
@@ -307,17 +298,6 @@ fun RightTop(modifier: Modifier) {
     }
 }
 
-@Composable
-fun LeftTab(modifier: Modifier) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-//        Text(text = "左侧tab", color = Color.Black)
-        leftTabUi()
-    }
-}
-
 /**
  * 导航区域
  */
@@ -379,6 +359,14 @@ object AppHelper {
     val pages = mutableMapOf<String, @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit>(
         "home" to { HomeUi() },
         "mine" to { MineUi() },
+        "recommend" to { RecommendUi() },
+        "radio" to { RadioUi() },
+        "follow" to { FollowUi() },
+        "like" to { LikeUi() },
+        "recent" to { RecentUi() },
+        "collect" to { CollectUi() },
+        "local" to { LocalUi() },
+
         "login" to { LoginUi() },
     )
 
