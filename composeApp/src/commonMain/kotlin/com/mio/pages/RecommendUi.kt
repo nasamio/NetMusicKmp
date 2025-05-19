@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
+import com.mio.Player
 import com.mio.bean.Recommend
 import com.mio.countStr
 import com.mio.logcat
@@ -117,6 +118,9 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
                                 scope.launch {
                                     KtorHelper.getSongs(item.id.toString()).collect {
                                         logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
+
+                                        // 测试
+                                        it.songs[0].let { Player.currentSong.value = it }
                                     }
                                 }
                             }

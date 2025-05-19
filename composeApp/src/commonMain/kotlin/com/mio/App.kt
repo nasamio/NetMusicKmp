@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mio.pages.LeftTabUi
 import com.mio.pages.LoadingUi
+import com.mio.pages.PlayerUi
 import com.mio.pages.RightTop
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
@@ -65,6 +66,10 @@ fun MainUi() {
 
         // 其他内容 一般用于页面上物
 
+        // 播放器
+        PlayerUi(
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
