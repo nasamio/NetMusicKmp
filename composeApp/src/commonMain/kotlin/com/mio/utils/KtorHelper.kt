@@ -168,6 +168,17 @@ object KtorHelper {
             "cookie" to AppHelper.cookie.value,
         ),
     )
+
+    // 获取歌曲播放链接
+    fun getSongUrl(id: String) = get<SongUrlResponse>(
+        url = "/song/url",
+        params = mapOf(
+            "id" to id,
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+            "br" to "320000",
+        ),
+    )
 }
 
 fun Int.isOk() = this == 200

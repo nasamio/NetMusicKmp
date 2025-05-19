@@ -118,9 +118,8 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
                                 scope.launch {
                                     KtorHelper.getSongs(item.id.toString()).collect {
                                         logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
-
-                                        // 测试
-                                        it.songs[0].let { Player.currentSong.value = it }
+                                        // 添加到歌单
+                                        if (it.code?.isOk() == true)  Player.play(it.songs)
                                     }
                                 }
                             }

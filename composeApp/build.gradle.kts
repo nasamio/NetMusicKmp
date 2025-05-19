@@ -14,7 +14,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -54,6 +54,10 @@ kotlin {
             // 取色
             implementation(libs.kmpalette.core)
 
+            // 媒体库
+//            implementation(libs.compose.media.player)
+
+            implementation("eu.iamkonstantin.kotlin:gadulka:1.5.0")
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -67,6 +71,15 @@ kotlin {
             // gson
             implementation("com.google.code.gson:gson:2.10.1")
             implementation(libs.ktor.client.desktop)
+
+            // 下面强制增加java fx依赖 解决在windows平台gadulka无法正常运行的问题
+            val fxSuffix = "win"
+            implementation("org.openjfx:javafx-base:19:${fxSuffix}")
+            implementation("org.openjfx:javafx-graphics:19:${fxSuffix}")
+            implementation("org.openjfx:javafx-controls:19:${fxSuffix}")
+            implementation("org.openjfx:javafx-swing:19:${fxSuffix}")
+            implementation("org.openjfx:javafx-web:19:${fxSuffix}")
+            implementation("org.openjfx:javafx-media:19:${fxSuffix}")
         }
     }
 }
@@ -93,8 +106,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

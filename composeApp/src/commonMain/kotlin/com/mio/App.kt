@@ -10,18 +10,31 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mio.Player.play
 import com.mio.pages.LeftTabUi
 import com.mio.pages.LoadingUi
 import com.mio.pages.PlayerUi
 import com.mio.pages.RightTop
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
+import eu.iamkonstantin.kotlin.gadulka.GadulkaPlayer
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
 
 @Composable
 @Preview
 fun App() {
+    Player.initPlayer()
+
+    GlobalScope.launch {
+        play("http://m701.music.126.net/20250519181552/893aec3d8239a4dbff70a333b1272a3a/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=Ibz2jcCfNDkbVH60matL4AxH4zfn4s88ZOiXH2BVn4tGmzdCpJVm+6qBQFwQ4IcQKUdkV/Swn1zIQnh+OPUtbvv7/VwI5qumdW6QrSdSUC9wfao0XQriMsldNnvyw5fc0rfdqBxTji52sKlVcbdvdIP3bLaHvQc1xASeJ6J63cY=")
+        delay(1_000)
+        logcat("volume:${Player.getVolume()}")
+    }
+
     MaterialTheme {
         MainUi()
     }

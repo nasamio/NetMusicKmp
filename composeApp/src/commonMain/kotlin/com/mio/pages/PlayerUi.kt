@@ -58,9 +58,10 @@ fun PlayerUi(modifier: Modifier) {
 
 @Composable
 fun MiniPlayer(modifier: Modifier) {
-    val currentSong = Player.currentSong.collectAsState()
+    val currentIndex = Player.currentIndex.collectAsState()
+    val currentSong = Player.playList.value.let { if (it.isEmpty()) null else it[currentIndex.value] }
 
-    logcat("url:${currentSong.value?.al?.picUrl}")
+    logcat("url:${currentSong?.al?.picUrl}")
 
     Box(
         modifier = modifier
@@ -69,7 +70,7 @@ fun MiniPlayer(modifier: Modifier) {
         MiniLeft(
             modifier = Modifier.align(Alignment.CenterStart)
                 .padding(horizontal = 28.dp),
-            currentSong = currentSong.value,
+            currentSong = currentSong,
         )
 
 
@@ -81,7 +82,7 @@ fun MiniPlayer(modifier: Modifier) {
         MiniRight(
             modifier = Modifier.align(Alignment.CenterEnd)
                 .padding(horizontal = 28.dp),
-            currentSong = currentSong.value,
+            currentSong = currentSong,
         )
     }
 }
