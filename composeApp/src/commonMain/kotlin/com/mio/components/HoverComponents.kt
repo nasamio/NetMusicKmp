@@ -111,3 +111,20 @@ fun HoveredIcon(
         )
     }
 }
+
+// 监听鼠标悬停事件
+@OptIn(ExperimentalComposeUiApi::class)
+fun Modifier.hoverListener(
+    onHover: (Boolean) -> Unit = {},
+): Modifier {
+    return this.pointerMoveFilter(
+        onEnter = {
+            onHover(true)
+            false
+        },
+        onExit = {
+            onHover(false)
+            false
+        }
+    )
+}

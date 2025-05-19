@@ -11,6 +11,7 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.serialization.json.Json
 
 /**
  * 网络请求 使用ktor进行网络请求
@@ -29,7 +30,19 @@ object KtorHelper {
                 }
             }
             install(ContentNegotiation) {
-                json()
+                json(
+                    json = Json {
+                        encodeDefaults = true
+                        isLenient = true
+                        allowSpecialFloatingPointValues = true
+                        allowStructuredMapKeys = true
+                        prettyPrint = false
+                        useArrayPolymorphism = false
+
+                        // 忽略多余字段
+                        ignoreUnknownKeys = true
+                    }
+                )
             }
 
         }
@@ -45,7 +58,7 @@ object KtorHelper {
         headers: Map<String, String> = emptyMap(),
         params: Map<String, String> = emptyMap(),
     ): Flow<T> {
-        println("get: 请求接口:$url")
+        println("get: 请求接口:$url,参数:$params")
         return flow {
             val response = httpClient.get(url) {
                 headers.forEach { header(it.key, it.value) }
