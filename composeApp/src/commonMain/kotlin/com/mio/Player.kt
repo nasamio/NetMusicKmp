@@ -4,6 +4,7 @@ import com.mio.bean.SongResponse
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import eu.iamkonstantin.kotlin.gadulka.GadulkaPlayer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -25,13 +26,40 @@ object Player {
     val currentIndex = MutableStateFlow(0)
 
     // 音量
-    val volume = MutableStateFlow(.2)
+    val volume = MutableStateFlow(.2f)
 
-    suspend fun play(url: String){
+    suspend fun play(url: String) {
         player.play(url)
-        player.playerState?.setOnReady {
-            logcat("media ready")
+        delay(100)
+        player.playerState?.let { mp ->
+            // 应用监听
+            mp.setOnReady {
+                logcat("onReady")
+            }
+            mp.setOnPlaying {
+                logcat("onPlaying")
+            }
+            mp.setOnPaused {
+                logcat("onPaused")
+            }
+            mp.setOnStopped {
+                logcat("onStopped")
+            }
+            mp.setOnEndOfMedia {
+                logcat("onEndOfMedia")
+            }
+            mp.setOnError {
+                logcat("onError")
+            }
+
+            // 每一次mp都要重新设置音量 因为每次播放一个新的 会新建一个mp对象来操作
+            logcat("current volume:${getVolume()}")
+
             setVolume(volume.value)
+
+            logcat("after volume:${getVolume()}")
+        } ?: run {
+            logcat("mp is null...")
         }
     }
 
@@ -62,9 +90,9 @@ object Player {
     fun release() = player.release()
 
     // play state只有在播放的时候才有值 音量默认为1.0
-    fun getVolume() = player.playerState?.volume
-    fun setVolume(volume: Double) {
-        player.playerState?.volume = volume
+    fun getVolume() = player.currentVolume()
+    fun setVolume(volume: Float) {
+        player.setVolume(volume)
     }
 
 

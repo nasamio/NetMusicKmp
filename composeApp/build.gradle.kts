@@ -57,7 +57,7 @@ kotlin {
             // 媒体库
 //            implementation(libs.compose.media.player)
 
-            implementation("eu.iamkonstantin.kotlin:gadulka:1.5.0")
+            implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
         }
         androidMain.dependencies {
             implementation(compose.preview)

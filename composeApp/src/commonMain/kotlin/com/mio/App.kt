@@ -30,7 +30,7 @@ fun App() {
     Player.initPlayer()
 
     GlobalScope.launch {
-        play("http://m701.music.126.net/20250519181552/893aec3d8239a4dbff70a333b1272a3a/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=Ibz2jcCfNDkbVH60matL4AxH4zfn4s88ZOiXH2BVn4tGmzdCpJVm+6qBQFwQ4IcQKUdkV/Swn1zIQnh+OPUtbvv7/VwI5qumdW6QrSdSUC9wfao0XQriMsldNnvyw5fc0rfdqBxTji52sKlVcbdvdIP3bLaHvQc1xASeJ6J63cY=")
+        play("http://m701.music.126.net/20250520094010/563fb213cc51df02bf36e6fc412e88eb/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=AveikHdogQkkYc6bman72IFM3BS8kx5DzbuoH972NDXCE/GyeKQSAyaipPQfXIkul3Rz+S4MNc70jNUPbGmWhhIW2CmwvXefI1rRoSwpEds4RTb0yYj4TZO7UkHEKifXPEuSiRjmgl2AtiOfOLN6G1197pGUbFWZHxJ3ldYBB7A=")
         delay(1_000)
         logcat("volume:${Player.getVolume()}")
     }

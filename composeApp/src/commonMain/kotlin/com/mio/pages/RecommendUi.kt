@@ -172,7 +172,7 @@ fun PlayListItem(
                             .dominantSwatch
                             ?.rgb
                             .let {
-                                logcat("color2:$it")
+//                                logcat("color2:$it")
                                 dominaColor = it?.toLong()?.let { it1 -> darkenColor(Color(it1)) }
                             }
                     }
