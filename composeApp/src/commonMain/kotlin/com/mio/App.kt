@@ -1,5 +1,7 @@
 package com.mio
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -11,10 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mio.Player.play
-import com.mio.pages.LeftTabUi
-import com.mio.pages.LoadingUi
-import com.mio.pages.PlayerUi
-import com.mio.pages.RightTop
+import com.mio.pages.*
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import kotlinx.coroutines.GlobalScope
@@ -92,7 +91,8 @@ fun MainUi() {
 @Composable
 fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(bottom = 80.dp), // todo 这里先固定给mini player让一个位置 后续改成根据播放器状态来让位置
     ) {
         // 左侧tab
         LeftTabUi(
@@ -125,25 +125,80 @@ fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
  */
 @Composable
 fun NavContent(showContent: Boolean, startDestination: String) {
-    val navController = rememberNavController()
-    AppHelper.navController = WeakReference(navController)
     Box(modifier = Modifier.fillMaxSize()) {
         if (showContent) {
-            NavHost(
-                modifier = Modifier.fillMaxSize(),
-                navController = navController,
-                startDestination = startDestination
-            ) {
-                AppHelper.pages.forEach { (route, content) ->
-                    composable(route) {
-                        navController.currentBackStackEntry?.let { it1 -> content(it1) }
-                    }
-                }
-            }
+            NavigationComponent(startDestination)
         } else {
             LoadingUi()
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun NavigationComponent(startDestination: String) {
+    val navController = rememberNavController()
+    AppHelper.navController = WeakReference(navController)
 
+    SharedTransitionScope { sharedScope ->
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController,
+            startDestination = startDestination
+        ) {
+
+            composable(Page.Recommend.route) {
+                RecommendUi()
+            }
+            composable(Page.PlayListDetail.route + "/{id}") { entry ->
+                val id = entry.arguments?.getString("id")?.toLongOrNull() ?: 0L
+                PlayListDetailUi(id = id)
+            }
+
+
+            composable(Page.Home.route) {
+                HomeUi()
+            }
+            composable(Page.Mine.route) {
+                MineUi()
+            }
+            composable(Page.Radio.route) {
+                RadioUi()
+            }
+            composable(Page.Follow.route) {
+                FollowUi()
+            }
+            composable(Page.Like.route) {
+                LikeUi()
+            }
+            composable(Page.Recent.route) {
+                RecentUi()
+            }
+            composable(Page.Collect.route) {
+                CollectUi()
+            }
+            composable(Page.Local.route) {
+                LocalUi()
+            }
+
+            composable(Page.Login.route) {
+                LoginUi() // todo 登录做成小弹窗
+            }
+        }
+    }
+}
+
+enum class Page(val route: String) {
+    Home("home"),
+    Mine("mine"),
+    Recommend("recommend"),
+    PlayListDetail("playlist_detail"),
+
+    Radio("radio"),
+    Follow("follow"),
+    Like("like"),
+    Recent("recent"),
+    Collect("collect"),
+    Local("local"),
+    Login("login"),
+}

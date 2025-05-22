@@ -142,14 +142,7 @@ object KtorHelper {
         ),
     )
 
-    suspend fun playlist(userId: Long?) = get<PlayListResponse>(
-        url = "/user/playlist",
-        params = mapOf(
-            "uid" to userId.toString(),
-            "timestamp" to System.currentTimeMillis().toString(),
-            "cookie" to AppHelper.cookie.value,
-        ),
-    )
+
 
     fun getSongs(songId: String) = get<SongResponse>(
         url = "/playlist/track/all",
@@ -169,6 +162,26 @@ object KtorHelper {
         ),
     )
 
+    // 个推歌单
+    fun recommendPersonal() = get<PersonalRecommendResponse>(
+        url = "/personalized",
+        params = mapOf(
+            "limit" to "10",
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
+
+    // 用户歌单 不加参数 获取所有的
+    suspend fun userPlaylist(userId: Long?) = get<PlayListResponse>(
+        url = "/user/playlist",
+        params = mapOf(
+            "uid" to userId.toString(),
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
+
     // 获取歌曲播放链接
     fun getSongUrl(id: String) = get<SongUrlResponse>(
         url = "/song/url",
@@ -177,6 +190,16 @@ object KtorHelper {
             "timestamp" to System.currentTimeMillis().toString(),
             "cookie" to AppHelper.cookie.value,
             "br" to "320000",
+        ),
+    )
+
+    // 获取歌单详情
+    fun getPlaylistDetail(id: String) = get<PlaylistDetailResponse>(
+        url = "/playlist/detail",
+        params = mapOf(
+            "id" to id,
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
         ),
     )
 }

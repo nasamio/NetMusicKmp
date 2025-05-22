@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,10 +25,8 @@ import androidx.compose.ui.unit.sp
 import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
-import com.mio.Player
+import com.mio.*
 import com.mio.bean.Recommend
-import com.mio.countStr
-import com.mio.logcat
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import hoverListener
@@ -40,35 +39,22 @@ import org.jetbrains.compose.resources.*
 
 @Composable
 fun RecommendUi() {
-    val recommendList = remember { mutableStateListOf<RecommendItem>() }
+    val recommendList = MemoryDataHelper.recommendList.collectAsState()
     val density = LocalDensity.current.density
     println("Current density: $density")
 
-    LaunchedEffect(1) {
-        KtorHelper.recommendResource().collect {
-            if (it.code.isOk()) {
-                logcat(
-                    "featureFirst:${it.featureFirst},haveRcmdSongs:${it.haveRcmdSongs},recommend:${
-                        it.recommend.joinToString {
-                            it.name + " " + it.copywriter + " " + it.trackCount
-                        }
-                    }"
-                )
-
-                recommendList += RecommendItem(
-                    title = "推荐歌单",
-                    list = it.recommend
-                )
-            }
-        }
+    LaunchedEffect(Unit) {
+        MemoryDataHelper.requestRecommendList()
     }
 
-    recommendList.forEach {
-        RecommendItemUi(
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            data = it,
-        )
+    LazyColumn {
+        items(recommendList.value.size) { index ->
+            RecommendItemUi(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                data = recommendList.value[index],
+            )
+        }
     }
 }
 
@@ -77,13 +63,14 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
     val scope = rememberCoroutineScope()
 
     Column(
-        modifier = modifier.padding(10.dp)
+        modifier = modifier.padding(horizontal = 10.dp)
     ) {
         Row(modifier = Modifier.padding(start = 8.dp)) {
             Text(
                 text = data.title,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
+                lineHeight = 32.sp,
             )
         }
 
@@ -115,13 +102,17 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
                             .width(itemWidth)
                             .height(itemHeight)
                             .clickable {
-                                scope.launch {
-                                    KtorHelper.getSongs(item.id.toString()).collect {
-                                        logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
-                                        // 添加到歌单
-                                        if (it.code?.isOk() == true)  Player.play(it.songs)
-                                    }
-                                }
+                                // 跳转到详情页
+                                AppHelper.navigate(Page.PlayListDetail.route + "/${item.id}")
+
+
+//                                scope.launch {
+//                                    KtorHelper.getSongs(item.id.toString()).collect {
+//                                        logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
+//                                        // 添加到歌单
+//                                        if (it.code?.isOk() == true) Player.play(it.songs)
+//                                    }
+//                                }
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
                         data = item,
@@ -138,11 +129,11 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
 @Composable
 fun PlayListItem(
     modifier: Modifier = Modifier,
-    data: Recommend,
+    data: SongList,
     width: Int,
     height: Int,
 ) {
-    logcat("data:${data}")
+    logcat("RecommendUI PlayListItem data:${data}")
     var dominaColor by remember { mutableStateOf<Color?>(null) }
 
     // 这里构造更高清的图地址，参数根据需要调整（宽720，高960，比例4:3）
@@ -194,7 +185,7 @@ fun PlayListItem(
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White)
             )
             Text(
-                text = data.playcount.countStr(),
+                text = data.playCount.countStr(),
                 color = Color.White,
                 fontSize = 12.sp,
                 // 行高
@@ -229,8 +220,19 @@ fun PlayListItem(
 
 data class RecommendItem(
     val title: String,
-    val list: List<Recommend>,
+    val list: List<SongList>,
 )
+
+data class SongList(
+    val id: Long,
+    val name: String,
+    val picUrl: String,
+    val playCount: Long,
+) {
+    override fun toString(): String {
+        return "SongList(id=$id, name='$name', picUrl='$picUrl', playcount=$playCount)"
+    }
+}
 
 fun darkenColor(color: Color, factor: Float = 0.8f): Color {
     // factor < 1 会使颜色变暗，范围一般是 0..1
