@@ -72,7 +72,7 @@ kotlin {
             implementation("com.google.code.gson:gson:2.10.1")
             implementation(libs.ktor.client.desktop)
 
-            implementation("uk.co.caprica:vlcj:5.0.0-M4")
+            implementation("uk.co.caprica:vlcj:4.7.1")
 
             // 下面强制增加java fx依赖 解决在windows平台gadulka无法正常运行的问题
             val fxSuffix = "win"
@@ -123,7 +123,7 @@ compose.desktop {
         mainClass = "com.mio.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Exe)
             packageName = "com.mio"
             packageVersion = "1.0.0"
         }

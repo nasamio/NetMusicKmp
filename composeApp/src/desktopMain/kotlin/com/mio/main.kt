@@ -11,9 +11,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import netmusickmp.composeapp.generated.resources.Res
 import netmusickmp.composeapp.generated.resources.ic_app
 import org.jetbrains.compose.resources.painterResource
+import java.io.File
 
 fun main() = application {
     Window(

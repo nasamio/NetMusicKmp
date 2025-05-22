@@ -7,10 +7,12 @@ actual object MioPlayer {
     private lateinit var mediaPlayer: MediaPlayer
 
     actual fun init() {
-        val vlcLibPath = "D:\\codes\\kt\\publicLibs\\vlc-3.0.21"  // Windows示例
+        logcat("vlcj init start...")
+        val appDir = System.getProperty("user.dir")
+        val vlcLibPath = "$appDir/src/desktopMain/kotlin/libs/vlcLib"  // 这样写只支持调试的时候运行 打包产物后续考虑是否先把资源拷贝
         System.setProperty("jna.library.path", vlcLibPath)
         mediaPlayer = MediaPlayerFactory().mediaPlayers().newMediaPlayer()
-        logcat("vlcj init")
+        logcat("vlcj init over...")
     }
 
     actual fun play(url: String) {
@@ -21,9 +23,11 @@ actual object MioPlayer {
     actual fun pause() {
         mediaPlayer.controls().pause()
     }
+
     actual fun resume() {
         mediaPlayer.controls().play()
     }
+
     actual fun stop() {
         mediaPlayer.controls().stop()
     }
