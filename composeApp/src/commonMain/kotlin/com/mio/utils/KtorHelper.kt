@@ -142,14 +142,7 @@ object KtorHelper {
         ),
     )
 
-    suspend fun playlist(userId: Long?) = get<PlayListResponse>(
-        url = "/user/playlist",
-        params = mapOf(
-            "uid" to userId.toString(),
-            "timestamp" to System.currentTimeMillis().toString(),
-            "cookie" to AppHelper.cookie.value,
-        ),
-    )
+
 
     fun getSongs(songId: String) = get<SongResponse>(
         url = "/playlist/track/all",
@@ -164,6 +157,26 @@ object KtorHelper {
     fun recommendResource() = get<RecommendResourceResponse>(
         url = "/recommend/resource",
         params = mapOf(
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
+
+    // 个推歌单
+    fun recommendPersonal() = get<PersonalRecommendResponse>(
+        url = "/personalized",
+        params = mapOf(
+            "limit" to "10",
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
+
+    // 用户歌单 不加参数 获取所有的
+    suspend fun userPlaylist(userId: Long?) = get<PlayListResponse>(
+        url = "/user/playlist",
+        params = mapOf(
+            "uid" to userId.toString(),
             "timestamp" to System.currentTimeMillis().toString(),
             "cookie" to AppHelper.cookie.value,
         ),

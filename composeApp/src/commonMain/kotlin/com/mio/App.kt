@@ -92,7 +92,8 @@ fun MainUi() {
 @Composable
 fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(bottom = 80.dp), // todo 这里先固定给mini player让一个位置 后续改成根据播放器状态来让位置
     ) {
         // 左侧tab
         LeftTabUi(

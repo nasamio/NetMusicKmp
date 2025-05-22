@@ -20,6 +20,11 @@ object AppHelper {
     val profile = MutableStateFlow<Profile?>(null)
     val isLogin = MutableStateFlow(false)
 
+    val userId: Long
+        get() {
+            return account.value?.id ?: 0L
+        }
+
     // 用于跳转歌单界面
     var toJumpPlayList: Playlist? = null
 
