@@ -4,32 +4,38 @@ import HoveredIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.Slider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import coil3.compose.AsyncImage
 import com.mio.Player
 import com.mio.bean.SongResponse
+import com.mio.components.VerticalVolumeSlider
 import com.mio.logcat
+import com.mio.utils.toMinAndSecStr
 import netmusickmp.composeapp.generated.resources.*
 import netmusickmp.composeapp.generated.resources.Res
 import netmusickmp.composeapp.generated.resources.ic_comment
 import netmusickmp.composeapp.generated.resources.ic_plus
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Toolkit
 import java.time.format.TextStyle
 
 @Composable
@@ -173,6 +179,9 @@ fun MiniLeft(modifier: Modifier, currentSong: SongResponse.Song?) {
 
 @Composable
 fun MiniCenter(modifier: Modifier) {
+    val current = Player.currentDuration.collectAsState()
+    val total = Player.totalDuration.collectAsState()
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -235,7 +244,7 @@ fun MiniCenter(modifier: Modifier) {
         ) {
             val margin = 10.dp
             Text(
-                text = "00:00",
+                text = current.value.toMinAndSecStr(),
                 fontSize = 12.sp,
                 lineHeight = 12.sp,
                 color = Color.Black.copy(alpha = .45f)
@@ -248,7 +257,7 @@ fun MiniCenter(modifier: Modifier) {
             )
             Spacer(Modifier.width(margin))
             Text(
-                text = "00:00",
+                text = total.value.toMinAndSecStr(),
                 fontSize = 12.sp,
                 lineHeight = 12.sp,
                 color = Color.Black.copy(alpha = .45f)
@@ -257,24 +266,56 @@ fun MiniCenter(modifier: Modifier) {
     }
 }
 
+
 @Composable
 fun MiniRight(modifier: Modifier, currentSong: SongResponse.Song?) {
+    var isVolumeVisible by remember { mutableStateOf(false) }
+    var volume = Player.volume.collectAsState()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val margin = 10.dp
-        HoveredIcon(
-            painter = painterResource(Res.drawable.ic_volumn),
-            modifier = Modifier.size(32.dp),
-            onClick = {
+        Box {
+            HoveredIcon(
+                painter = painterResource(Res.drawable.ic_volumn),
+                modifier = Modifier.size(32.dp),
+                onClick = {
+                    isVolumeVisible = !isVolumeVisible
+                }
+            )
+            if (isVolumeVisible) {
+                Popup(alignment = Alignment.TopCenter, offset = androidx.compose.ui.unit.IntOffset(0, -160)) {
+                    Surface(
+                        modifier = Modifier.wrapContentSize().padding(8.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        shadowElevation = 8.dp,
+                        color = Color.White
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            VerticalVolumeSlider(
+                                volume = volume.value,
+                                onVolumeChange = {
+                                    Player.volume.value = it
+                                },
+                            )
+                            Text(
+                                text = "${(volume.value * 100).toInt()}%",
+                                fontSize = 12.sp,
+                                color = Color.Black.copy(alpha = .45f),
+                            )
+                        }
+                    }
+                }
             }
-        )
-        Spacer(Modifier.width(margin))
+        }
+        Spacer(Modifier.width(10.dp))
         HoveredIcon(
             painter = painterResource(Res.drawable.ic_menu),
             modifier = Modifier.size(32.dp),
             onClick = {
+                // 菜单点击逻辑
             }
         )
     }

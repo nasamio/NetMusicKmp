@@ -2,22 +2,19 @@ package com.mio
 
 import com.mio.bean.SongResponse
 import com.mio.utils.KtorHelper
+import com.mio.utils.collectIn
 import com.mio.utils.isOk
 import eu.iamkonstantin.kotlin.gadulka.GadulkaPlayer
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /**
  * 播放器
  */
 object Player {
     private lateinit var player: GadulkaPlayer
-
-    fun initPlayer() {
-        player = GadulkaPlayer().apply {}
-
-
-    }
 
     // 歌曲播放列表
     val playList: MutableStateFlow<List<SongResponse.Song>> = MutableStateFlow(emptyList())
@@ -26,7 +23,41 @@ object Player {
     val currentIndex = MutableStateFlow(0)
 
     // 音量
-    val volume = MutableStateFlow(.2f)
+    val volume = MutableStateFlow(.6f)
+
+    // 当前进度
+    val currentDuration = MutableStateFlow(0L)
+    // 总进度
+    val totalDuration = MutableStateFlow(0L)
+
+   suspend fun initPlayer() {
+        player = GadulkaPlayer().apply {}
+
+        GlobalScope.launch {
+            volume.collectIn{
+                setVolume(it)
+            }
+        }
+
+        // 读取设置
+
+        // 音量
+        getString("volume", "0.6").toFloatOrNull()?.let {
+            volume.value = it
+        } ?: run {
+            volume.value = 0.6f
+        }
+
+       startProgressCheck()
+    }
+
+    private suspend fun startProgressCheck() {
+        currentDuration.value = player.currentPosition() ?: 0L
+        totalDuration.value = player.currentDuration() ?: 0L
+
+        delay(400)
+        startProgressCheck()
+    }
 
     suspend fun play(url: String) {
         player.play(url)
@@ -52,12 +83,12 @@ object Player {
                 logcat("onError")
             }
 
-            // 每一次mp都要重新设置音量 因为每次播放一个新的 会新建一个mp对象来操作
-            logcat("current volume:${getVolume()}")
-
-            setVolume(volume.value)
-
-            logcat("after volume:${getVolume()}")
+//            // 每一次mp都要重新设置音量 因为每次播放一个新的 会新建一个mp对象来操作
+//            logcat("current volume:${getVolume()}")
+//
+//            setVolume(volume.value)
+//
+//            logcat("after volume:${getVolume()}")
         } ?: run {
             logcat("mp is null...")
         }

@@ -23,14 +23,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
+import kotlin.math.log
 
 @Composable
 @Preview
 fun App() {
-    Player.initPlayer()
+    GlobalScope.launch {
+        Player.initPlayer()
+    }
 
     GlobalScope.launch {
-        play("http://m701.music.126.net/20250520094010/563fb213cc51df02bf36e6fc412e88eb/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=AveikHdogQkkYc6bman72IFM3BS8kx5DzbuoH972NDXCE/GyeKQSAyaipPQfXIkul3Rz+S4MNc70jNUPbGmWhhIW2CmwvXefI1rRoSwpEds4RTb0yYj4TZO7UkHEKifXPEuSiRjmgl2AtiOfOLN6G1197pGUbFWZHxJ3ldYBB7A=")
+        delay(1000)
+        play("http://m801.music.126.net/20250520161505/9011f11262a4d0711e9d1400010abcac/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=1PYnX2esEo20KMVleAuDxAxqd4P0g/lZF3jtAthF3Lx0TWqMrUY7aq5t/JIl08FuGoGfbCFXRwuGxypLkVNd8xuqu7HTIzWEmd+jPI3/AJ8ikbEtb/b6JOhDjG2axxSEfXcUhqaLlTVcx2n6XiYiDQ9tt4lpkWi8u1wGjj+1mCU=")
         delay(1_000)
         logcat("volume:${Player.getVolume()}")
     }
@@ -49,7 +53,6 @@ fun App() {
 @Composable
 fun MainUi() {
     Box(modifier = Modifier.fillMaxSize()) {
-
         var hasJudgeLogin by remember { mutableStateOf(false) }
         var startDestination by remember { mutableStateOf("recommend") }
 
