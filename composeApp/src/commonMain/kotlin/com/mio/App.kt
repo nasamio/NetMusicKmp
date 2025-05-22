@@ -17,26 +17,26 @@ import com.mio.pages.PlayerUi
 import com.mio.pages.RightTop
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
-import eu.iamkonstantin.kotlin.gadulka.GadulkaPlayer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
-import kotlin.math.log
 
+@Suppress("CoroutineCreationDuringComposition")
 @Composable
 @Preview
 fun App() {
     GlobalScope.launch {
         Player.initPlayer()
     }
-
+    val fileEncoding = System.getProperty("file.encoding")
+    println("Default file encoding: $fileEncoding")
     GlobalScope.launch {
-        delay(1000)
+        delay(10_000)
         play("http://m801.music.126.net/20250520161505/9011f11262a4d0711e9d1400010abcac/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=1PYnX2esEo20KMVleAuDxAxqd4P0g/lZF3jtAthF3Lx0TWqMrUY7aq5t/JIl08FuGoGfbCFXRwuGxypLkVNd8xuqu7HTIzWEmd+jPI3/AJ8ikbEtb/b6JOhDjG2axxSEfXcUhqaLlTVcx2n6XiYiDQ9tt4lpkWi8u1wGjj+1mCU=")
         delay(1_000)
-        logcat("volume:${Player.getVolume()}")
+//        logcat("volume:${Player.getVolume()}")
     }
 
     MaterialTheme {

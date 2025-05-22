@@ -57,7 +57,7 @@ kotlin {
             // 媒体库
 //            implementation(libs.compose.media.player)
 
-            implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
+//            implementation(libs.gadulka)
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -71,6 +71,8 @@ kotlin {
             // gson
             implementation("com.google.code.gson:gson:2.10.1")
             implementation(libs.ktor.client.desktop)
+
+            implementation("uk.co.caprica:vlcj:5.0.0-M4")
 
             // 下面强制增加java fx依赖 解决在windows平台gadulka无法正常运行的问题
             val fxSuffix = "win"

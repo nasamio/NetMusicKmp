@@ -2,19 +2,18 @@ package com.mio
 
 import com.mio.bean.SongResponse
 import com.mio.utils.KtorHelper
-import com.mio.utils.collectIn
 import com.mio.utils.isOk
-import eu.iamkonstantin.kotlin.gadulka.GadulkaPlayer
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 /**
  * 播放器
  */
 object Player {
-    private lateinit var player: GadulkaPlayer
+    private var player = MioPlayer
+
+    fun initPlayer() {
+        player.init()
+    }
 
     // 歌曲播放列表
     val playList: MutableStateFlow<List<SongResponse.Song>> = MutableStateFlow(emptyList())
@@ -30,68 +29,8 @@ object Player {
     // 总进度
     val totalDuration = MutableStateFlow(0L)
 
-   suspend fun initPlayer() {
-        player = GadulkaPlayer().apply {}
-
-        GlobalScope.launch {
-            volume.collectIn{
-                setVolume(it)
-            }
-        }
-
-        // 读取设置
-
-        // 音量
-        getString("volume", "0.6").toFloatOrNull()?.let {
-            volume.value = it
-        } ?: run {
-            volume.value = 0.6f
-        }
-
-       startProgressCheck()
-    }
-
-    private suspend fun startProgressCheck() {
-        currentDuration.value = player.currentPosition() ?: 0L
-        totalDuration.value = player.currentDuration() ?: 0L
-
-        delay(400)
-        startProgressCheck()
-    }
-
     suspend fun play(url: String) {
         player.play(url)
-        delay(100)
-        player.playerState?.let { mp ->
-            // 应用监听
-            mp.setOnReady {
-                logcat("onReady")
-            }
-            mp.setOnPlaying {
-                logcat("onPlaying")
-            }
-            mp.setOnPaused {
-                logcat("onPaused")
-            }
-            mp.setOnStopped {
-                logcat("onStopped")
-            }
-            mp.setOnEndOfMedia {
-                logcat("onEndOfMedia")
-            }
-            mp.setOnError {
-                logcat("onError")
-            }
-
-//            // 每一次mp都要重新设置音量 因为每次播放一个新的 会新建一个mp对象来操作
-//            logcat("current volume:${getVolume()}")
-//
-//            setVolume(volume.value)
-//
-//            logcat("after volume:${getVolume()}")
-        } ?: run {
-            logcat("mp is null...")
-        }
     }
 
     suspend fun play(songs: List<SongResponse.Song>) {
@@ -117,19 +56,19 @@ object Player {
     }
 
 
-    fun stop() = player.stop()
+//    fun stop() = player.stop()
     fun release() = player.release()
-
-    // play state只有在播放的时候才有值 音量默认为1.0
-    fun getVolume() = player.currentVolume()
-    fun setVolume(volume: Float) {
-        player.setVolume(volume)
-    }
-
-
-    fun test() {
-        player.playerState?.setOnPlaying {
-            println("onPlaying")
-        }
-    }
+//
+//    // play state只有在播放的时候才有值 音量默认为1.0
+//    fun getVolume() = player.currentVolume()
+//    fun setVolume(volume: Float) {
+//        player.setVolume(volume)
+//    }
+//
+//
+//    fun test() {
+//        player.playerState?.setOnPlaying {
+//            println("onPlaying")
+//        }
+//    }
 }
