@@ -25,11 +25,8 @@ import androidx.compose.ui.unit.sp
 import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
-import com.mio.MemoryDataHelper
-import com.mio.Player
+import com.mio.*
 import com.mio.bean.Recommend
-import com.mio.countStr
-import com.mio.logcat
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import hoverListener
@@ -105,13 +102,17 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
                             .width(itemWidth)
                             .height(itemHeight)
                             .clickable {
-                                scope.launch {
-                                    KtorHelper.getSongs(item.id.toString()).collect {
-                                        logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
-                                        // 添加到歌单
-                                        if (it.code?.isOk() == true) Player.play(it.songs)
-                                    }
-                                }
+                                // 跳转到详情页
+                                AppHelper.navigate(Page.PlayListDetail.route + "/${item.id}")
+
+
+//                                scope.launch {
+//                                    KtorHelper.getSongs(item.id.toString()).collect {
+//                                        logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
+//                                        // 添加到歌单
+//                                        if (it.code?.isOk() == true) Player.play(it.songs)
+//                                    }
+//                                }
                             }
                             .padding(horizontal = 10.dp, vertical = 10.dp),
                         data = item,

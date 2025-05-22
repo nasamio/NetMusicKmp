@@ -192,6 +192,16 @@ object KtorHelper {
             "br" to "320000",
         ),
     )
+
+    // 获取歌单详情
+    fun getPlaylistDetail(id: String) = get<PlaylistDetailResponse>(
+        url = "/playlist/detail",
+        params = mapOf(
+            "id" to id,
+            "timestamp" to System.currentTimeMillis().toString(),
+            "cookie" to AppHelper.cookie.value,
+        ),
+    )
 }
 
 fun Int.isOk() = this == 200

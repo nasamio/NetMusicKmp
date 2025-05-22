@@ -28,20 +28,6 @@ object AppHelper {
     // 用于跳转歌单界面
     var toJumpPlayList: Playlist? = null
 
-    // 路由定义
-    val pages = mutableMapOf<String, @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit>(
-        "home" to { HomeUi() },
-        "mine" to { MineUi() },
-        "recommend" to { RecommendUi() },
-        "radio" to { RadioUi() },
-        "follow" to { FollowUi() },
-        "like" to { LikeUi() },
-        "recent" to { RecentUi() },
-        "collect" to { CollectUi() },
-        "local" to { LocalUi() },
-
-        "login" to { LoginUi() },
-    )
 
     // 页面跳转
     fun navigate(route: String) = navController.get()?.navigate(route)
