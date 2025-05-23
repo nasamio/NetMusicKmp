@@ -35,7 +35,7 @@ data class Privilege(
     @SerialName("freeTrialPrivilege")
     val freeTrialPrivilege: FreeTrialPrivilegeX = FreeTrialPrivilegeX(),
     @SerialName("id")
-    val id: Int = 0,
+    val id: Long = 0,
     @SerialName("ignoreCache")
     val ignoreCache: String? = String(),
     @SerialName("maxBrLevel")

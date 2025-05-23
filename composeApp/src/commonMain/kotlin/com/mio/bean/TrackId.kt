@@ -15,7 +15,7 @@ data class TrackId(
     @SerialName("f")
     val f: String? = null,
     @SerialName("id")
-    val id: Int = 0,
+    val id: Long = 0,
     @SerialName("rcmdReason")
     val rcmdReason: String = "",
     @SerialName("rcmdReasonTitle")
@@ -27,7 +27,7 @@ data class TrackId(
     @SerialName("t")
     val t: Int = 0,
     @SerialName("uid")
-    val uid: Int = 0,
+    val uid: Long = 0,
     @SerialName("v")
     val v: Int = 0
 )

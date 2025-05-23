@@ -17,7 +17,7 @@ data class CreatorXX(
     @SerialName("authority")
     val authority: Int = 0,
     @SerialName("avatarDetail")
-    val avatarDetail: String? = null,
+    val avatarDetail: Subscriber.AvatarDetail? = null,
     @SerialName("avatarImgId")
     val avatarImgId: Long = 0,
     @SerialName("avatarImgIdStr")
@@ -29,7 +29,7 @@ data class CreatorXX(
     @SerialName("backgroundImgIdStr")
     val backgroundImgIdStr: String = "",
     @SerialName("backgroundUrl")
-    val backgroundUrl: String = "",
+    val backgroundUrl: String? = null,
     @SerialName("birthday")
     val birthday: Int = 0,
     @SerialName("city")
@@ -43,7 +43,7 @@ data class CreatorXX(
     @SerialName("djStatus")
     val djStatus: Int = 0,
     @SerialName("expertTags")
-    val expertTags: String? = null,
+    val expertTags: List<String?>? = null,
     @SerialName("experts")
     val experts: String? = null,
     @SerialName("followed")
@@ -61,7 +61,7 @@ data class CreatorXX(
     @SerialName("signature")
     val signature: String = "",
     @SerialName("userId")
-    val userId: Int = 0,
+    val userId: Long = 0,
     @SerialName("userType")
     val userType: Int = 0,
     @SerialName("vipType")

@@ -9,9 +9,9 @@ data class PlaylistX(
     @SerialName("adType")
     val adType: Int = 0,
     @SerialName("algTags")
-    val algTags: String? = String(),
+    val algTags: List<String?>? = null,
     @SerialName("backgroundCoverId")
-    val backgroundCoverId: Int = 0,
+    val backgroundCoverId: Long = 0,
     @SerialName("backgroundCoverUrl")
     val backgroundCoverUrl: String? = String(),
     @SerialName("bannedTrackIds")
@@ -29,7 +29,7 @@ data class PlaylistX(
     @SerialName("coverImgId")
     val coverImgId: Long = 0,
     @SerialName("coverImgId_str")
-    val coverImgIdStr: String = "",
+    val coverImgIdStr: String? = null,
     @SerialName("coverImgUrl")
     val coverImgUrl: String = "",
     @SerialName("coverStatus")
@@ -73,7 +73,7 @@ data class PlaylistX(
     @SerialName("ordered")
     val ordered: Boolean = false,
     @SerialName("playCount")
-    val playCount: Int = 0,
+    val playCount: Long = 0,
     @SerialName("playlistType")
     val playlistType: String = "",
     @SerialName("privacy")
@@ -85,7 +85,7 @@ data class PlaylistX(
     @SerialName("score")
     val score: String? = String(),
     @SerialName("shareCount")
-    val shareCount: Int = 0,
+    val shareCount: Long = 0,
     @SerialName("sharedUsers")
     val sharedUsers: String? = String(),
     @SerialName("specialType")
@@ -101,11 +101,11 @@ data class PlaylistX(
     @SerialName("tags")
     val tags: List<String> = listOf(),
     @SerialName("titleImage")
-    val titleImage: Int = 0,
+    val titleImage: Long = 0,
     @SerialName("titleImageUrl")
     val titleImageUrl: String? = String(),
     @SerialName("trackCount")
-    val trackCount: Int = 0,
+    val trackCount: Long = 0,
     @SerialName("trackIds")
     val trackIds: List<TrackId> = listOf(),
     @SerialName("trackNumberUpdateTime")
@@ -121,7 +121,7 @@ data class PlaylistX(
     @SerialName("updateTime")
     val updateTime: Long = 0,
     @SerialName("userId")
-    val userId: Int = 0,
+    val userId: Long = 0,
     @SerialName("videoIds")
     val videoIds: String? = String(),
     @SerialName("videos")

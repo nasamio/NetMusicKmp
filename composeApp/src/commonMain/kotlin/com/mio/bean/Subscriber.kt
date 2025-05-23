@@ -17,7 +17,7 @@ data class Subscriber(
     @SerialName("authority")
     val authority: Int = 0,
     @SerialName("avatarDetail")
-    val avatarDetail: String? = null,
+    val avatarDetail: AvatarDetail? = null,
     @SerialName("avatarImgId")
     val avatarImgId: Long = 0,
     @SerialName("avatarImgIdStr")
@@ -67,5 +67,8 @@ data class Subscriber(
     @SerialName("userType")
     val userType: Int = 0,
     @SerialName("vipType")
-    val vipType: Int = 0
-)
+    val vipType: Int = 0,
+) {
+    @Serializable
+    class AvatarDetail
+}
