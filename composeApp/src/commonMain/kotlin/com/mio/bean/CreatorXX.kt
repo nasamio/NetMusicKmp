@@ -45,7 +45,7 @@ data class CreatorXX(
     @SerialName("expertTags")
     val expertTags: List<String?>? = null,
     @SerialName("experts")
-    val experts: String? = null,
+    val experts: Experts? = null,
     @SerialName("followed")
     val followed: Boolean = false,
     @SerialName("gender")

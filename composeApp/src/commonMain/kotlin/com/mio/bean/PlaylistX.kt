@@ -39,7 +39,7 @@ data class PlaylistX(
     @SerialName("creator")
     val creator: CreatorXX = CreatorXX(),
     @SerialName("description")
-    val description: String = "",
+    val description: String? = null,
     @SerialName("detailPageTitle")
     val detailPageTitle: String? = String(),
     @SerialName("displayTags")
@@ -87,7 +87,7 @@ data class PlaylistX(
     @SerialName("shareCount")
     val shareCount: Long = 0,
     @SerialName("sharedUsers")
-    val sharedUsers: String? = String(),
+    val sharedUsers: List<SharedUser?>? = null,
     @SerialName("specialType")
     val specialType: Int = 0,
     @SerialName("status")
@@ -127,3 +127,6 @@ data class PlaylistX(
     @SerialName("videos")
     val videos: String? = String()
 )
+
+@Serializable
+class SharedUser

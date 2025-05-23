@@ -40,7 +40,7 @@ data class Creator(
 @Serializable
 data class Experts(
     @SerialName("1")
-    val a: String?,
+    val a: String? = null,
     @SerialName("2")
-    val b: String?,
+    val b: String? = null,
 )

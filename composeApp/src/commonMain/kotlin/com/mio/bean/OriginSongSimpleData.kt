@@ -13,5 +13,5 @@ data class OriginSongSimpleData(
     @SerialName("name")
     val name: String = "",
     @SerialName("songId")
-    val songId: Int = 0
+    val songId: Long = 0
 )

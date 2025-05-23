@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.mio.pages
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -26,9 +28,6 @@ import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
 import com.mio.*
-import com.mio.bean.Recommend
-import com.mio.utils.KtorHelper
-import com.mio.utils.isOk
 import hoverListener
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -37,10 +36,13 @@ import netmusickmp.composeapp.generated.resources.Res
 import netmusickmp.composeapp.generated.resources.ic_music
 import org.jetbrains.compose.resources.*
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun RecommendUi() {
+fun SharedTransitionScope.RecommendUi(animScope: AnimatedContentScope) {
     val recommendList = MemoryDataHelper.recommendList.collectAsState()
     val density = LocalDensity.current.density
+
+
     println("Current density: $density")
 
     LaunchedEffect(Unit) {
@@ -53,15 +55,18 @@ fun RecommendUi() {
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 data = recommendList.value[index],
+                animScope = animScope,
             )
         }
     }
 }
 
 @Composable
-fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
-    val scope = rememberCoroutineScope()
-
+fun SharedTransitionScope.RecommendItemUi(
+    modifier: Modifier,
+    data: RecommendItem,
+    animScope: AnimatedContentScope,
+) {
     Column(
         modifier = modifier.padding(horizontal = 10.dp)
     ) {
@@ -74,52 +79,29 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
             )
         }
 
-        // 关键修改：动态获取最大宽度，固定5个item宽度，高度宽度4/3比例
-        BoxWithConstraints(
+
+        LazyRow(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val maxWidthPx = with(LocalDensity.current) { maxWidth.toPx() }
-            val itemCountPerPage = 5
-            val itemWidthPx = maxWidthPx / itemCountPerPage
-            val itemHeightPx = itemWidthPx * 4f / 3f
+            itemsIndexed(data.list) { index, item ->
+                var hovered by remember { mutableStateOf(false) }
+                var shape = remember { mutableStateOf(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)) }
 
-            val itemWidth = with(LocalDensity.current) { itemWidthPx.toDp() }
-            val itemHeight = with(LocalDensity.current) { itemHeightPx.toDp() }
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(itemHeight + 20.dp) // 预留padding高度
-            ) {
-                itemsIndexed(data.list) { index, item ->
-                    var hovered by remember { mutableStateOf(false) }
-
-                    PlayListItem(
-                        modifier = Modifier
-                            .hoverListener {
-                                hovered = it
-                            }
-                            .width(itemWidth)
-                            .height(itemHeight)
-                            .clickable {
-                                // 跳转到详情页
-                                AppHelper.navigate(Page.PlayListDetail.route + "/${item.id}")
-
-
-//                                scope.launch {
-//                                    KtorHelper.getSongs(item.id.toString()).collect {
-//                                        logcat("歌单中的歌曲:${it.songs.joinToString { it.name.toString() }}")
-//                                        // 添加到歌单
-//                                        if (it.code?.isOk() == true) Player.play(it.songs)
-//                                    }
-//                                }
-                            }
-                            .padding(horizontal = 10.dp, vertical = 10.dp),
-                        data = item,
-                        width = itemWidthPx.toInt(),
-                        height = itemHeightPx.toInt(),
-                    )
-                }
+                PlayListItem(
+                    modifier = Modifier
+                        .hoverListener {
+                            hovered = it
+                        }
+                        .clickable {
+                            shape.value = RoundedCornerShape(8.dp)
+                            // 跳转到详情页
+                            AppHelper.navigate(Page.PlayListDetail.route + "/${item.id}")
+                        }
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    data = item,
+                    animScope = animScope,
+                    shape = shape.value,
+                )
             }
         }
     }
@@ -127,49 +109,82 @@ fun RecommendItemUi(modifier: Modifier, data: RecommendItem) {
 
 @OptIn(ExperimentalResourceApi::class, DelicateCoroutinesApi::class)
 @Composable
-fun PlayListItem(
+fun SharedTransitionScope.PlayListItem(
     modifier: Modifier = Modifier,
     data: SongList,
-    width: Int,
-    height: Int,
+    animScope: AnimatedContentScope,
+    shape: RoundedCornerShape,
 ) {
     logcat("RecommendUI PlayListItem data:${data}")
     var dominaColor by remember { mutableStateOf<Color?>(null) }
 
-    // 这里构造更高清的图地址，参数根据需要调整（宽720，高960，比例4:3）
-    val highResUrl = remember(data.picUrl) {
-        if (data.picUrl.contains("?")) {
-            data.picUrl.substringBefore("?") + "?param=${width}y${height}"
-        } else {
-            data.picUrl + "?param=${width}y${height}"
-        }
-    }
-
-    Box(modifier = modifier) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(8.dp)),
-            model = highResUrl, // 使用高清图url加载
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            onSuccess = { success ->
-                // 解析图片，提取主色用于底部背景
-                val bitmap = (success.result.image as BitmapImage).bitmap.asComposeImageBitmap()
-                GlobalScope.launch {
-                    bitmap.let {
-                        Palette.from(it)
-                            .generate()
-                            .dominantSwatch
-                            ?.rgb
-                            .let {
+    Box(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.width(140.dp)
+                .height(190.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .sharedBounds(
+                        // 使用shared bounds 必须都是外层的box
+                        rememberSharedContentState(data.id.toString()),
+                        animatedVisibilityScope = animScope,
+                        enter = EnterTransition.None,
+                        exit = ExitTransition.None,
+//                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                    )
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(shape),
+                    model = data.picUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    onSuccess = { success ->
+                        // 解析图片，提取主色用于底部背景
+                        val bitmap = (success.result.image as BitmapImage).bitmap.asComposeImageBitmap()
+                        GlobalScope.launch {
+                            bitmap.let {
+                                Palette.from(it)
+                                    .generate()
+                                    .dominantSwatch
+                                    ?.rgb
+                                    .let {
 //                                logcat("color2:$it")
-                                dominaColor = it?.toLong()?.let { it1 -> darkenColor(Color(it1)) }
+                                        dominaColor = it?.toLong()?.let { it1 -> darkenColor(Color(it1)) }
+                                    }
                             }
+                        }
                     }
-                }
+                )
             }
-        )
+
+            // 底部纯色
+            // 底部背景色，使用提取的主色或者默认色
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(
+                        color = dominaColor ?: Color.DarkGray,
+                        shape = RoundedCornerShape(bottomEnd = 8.dp, bottomStart = 8.dp)
+                    )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = data.name,
+                    fontSize = 16.sp,
+                    color = Color.White,
+                    lineHeight = 18.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
 
         // 右上角
         Row(
@@ -190,28 +205,6 @@ fun PlayListItem(
                 fontSize = 12.sp,
                 // 行高
                 lineHeight = 12.sp,
-            )
-        }
-
-        // 底部背景色，使用提取的主色或者默认色
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    color = dominaColor ?: Color.DarkGray,
-                    shape = RoundedCornerShape(bottomEnd = 8.dp, bottomStart = 8.dp)
-                )
-                .padding(8.dp)
-        ) {
-            Text(
-                text = data.name,
-                fontSize = 16.sp,
-                color = Color.White,
-                lineHeight = 18.sp,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
             )
         }
     }

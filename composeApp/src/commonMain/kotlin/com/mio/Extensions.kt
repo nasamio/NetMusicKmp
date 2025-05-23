@@ -16,3 +16,16 @@ fun Long.countStr(): String {
         String.format("%.1f", decimal) + "万"
     }
 }
+
+/**
+ * 时间戳转时间 类似 2023-12-18
+ */
+fun Long.timeStr(): String {
+    return if (this == 0L) {
+        ""
+    } else {
+        val date = java.util.Date(this)
+        val format = java.text.SimpleDateFormat("yyyy-MM-dd")
+        format.format(date)
+    }
+}

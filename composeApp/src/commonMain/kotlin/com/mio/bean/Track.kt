@@ -87,7 +87,7 @@ data class Track(
     val mst: Int = 0,
 
     @SerialName("mv")
-    val mv: Int = 0,
+    val mv: Long = 0,
 
     @SerialName("name")
     val name: String? = null,

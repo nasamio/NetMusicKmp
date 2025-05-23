@@ -45,11 +45,13 @@ fun RightTop(modifier: Modifier) {
                 .height(36.dp),
             onClick = {
                 logcat("点击了菜单")
+
+                AppHelper.popBackStack()
             }
         ) {
             Icon(
                 painter = painterResource(Res.drawable.ic_back),
-                contentDescription = "Menu",
+                contentDescription = "back",
                 tint = Color.Black.copy(alpha = .5f),
                 modifier = Modifier.size(16.dp)
             )

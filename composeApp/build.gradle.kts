@@ -34,6 +34,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
+//            implementation("androidx.compose.animation:animation:1.8.2")
+
             // 路由
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
             // Enables FileKit without Compose dependencies

@@ -1,7 +1,6 @@
 package com.mio
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -140,19 +139,30 @@ fun NavigationComponent(startDestination: String) {
     val navController = rememberNavController()
     AppHelper.navController = WeakReference(navController)
 
-    SharedTransitionScope { sharedScope ->
+    SharedTransitionLayout {
         NavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navController,
             startDestination = startDestination
         ) {
-
-            composable(Page.Recommend.route) {
-                RecommendUi()
+            composable(
+                Page.Recommend.route,
+//                enterTransition = { EnterTransition.None },
+//                exitTransition = { ExitTransition.None },
+//                popEnterTransition = { EnterTransition.None },
+//                popExitTransition = { ExitTransition.None },
+                ) {
+                RecommendUi(this@composable)
             }
-            composable(Page.PlayListDetail.route + "/{id}") { entry ->
-                val id = entry.arguments?.getString("id")?.toLongOrNull() ?: 0L
-                PlayListDetailUi(id = id)
+            composable(
+                Page.PlayListDetail.route + "/{id}",
+//                enterTransition = { EnterTransition.None },
+//                exitTransition = { ExitTransition.None },
+//                popEnterTransition = { EnterTransition.None },
+//                popExitTransition = { ExitTransition.None },
+            ) { entry ->
+                val id = entry.arguments?.getString("id")
+                PlayListDetailUi(id = id, animScope = this@composable)
             }
 
 
