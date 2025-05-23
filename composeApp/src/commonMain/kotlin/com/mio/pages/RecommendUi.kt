@@ -28,6 +28,7 @@ import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
 import com.mio.*
+import com.mio.components.FastSharedBounds
 import hoverListener
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -174,15 +175,17 @@ fun SharedTransitionScope.PlayListItem(
                     )
                     .padding(8.dp)
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = data.name,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    lineHeight = 18.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                FastSharedBounds(data.id.toString() + "_title", animScope) {
+                    Text(
+                        text = data.name,
+                        fontSize = 16.sp,
+                        color = Color.White,
+                        lineHeight = 18.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
             }
         }
 

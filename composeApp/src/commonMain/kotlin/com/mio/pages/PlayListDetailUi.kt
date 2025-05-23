@@ -3,9 +3,7 @@
 package com.mio.pages
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring.StiffnessLow
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,15 +14,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.mio.bean.PlaylistX
+import com.mio.components.FastSharedBounds
 import com.mio.countStr
 import com.mio.logcat
 import com.mio.timeStr
@@ -32,7 +31,6 @@ import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
 import netmusickmp.composeapp.generated.resources.Res
 import netmusickmp.composeapp.generated.resources.ic_music
-import netmusickmp.composeapp.generated.resources.ic_placeholder
 import netmusickmp.composeapp.generated.resources.ic_play
 import org.jetbrains.compose.resources.painterResource
 
@@ -101,25 +99,39 @@ fun SharedTransitionScope.PlayListDetailUi(id: String?, animScope: AnimatedConte
 
             Box(modifier = Modifier.height(169.dp)) {
                 Column {
-                    Text(
-                        text = playlist.name,
-                        color = Color.Black,
-                        fontSize = 20.sp,
-                        // 行高
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    FastSharedBounds(id.toString() + "_title", animScope) {
+                        Text(
+                            text = playlist.name,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            lineHeight = 20.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+
                     Spacer(Modifier.height(20.dp))
-                    Text(
-                        text = playlist.description?.replace("\n", " ") ?: "",
-                        color = Color.Black.copy(alpha = 0.5f),
-                        fontSize = 12.sp,
-                        // 行高
-                        lineHeight = 14.sp,
-                        modifier = Modifier.widthIn(max = 500.dp),
-                        maxLines = 3,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                    )
+                    AnimatedVisibility(
+                        true,
+                        enter = fadeIn(
+                            animationSpec = tween(
+                                durationMillis = 2400,
+                                delayMillis = 300,
+                            )
+                        )
+                    ) {
+                        Text(
+                            text = playlist.description?.replace("\n", " ") ?: "",
+                            color = Color.Black.copy(alpha = 0.5f),
+                            fontSize = 12.sp,
+                            // 行高
+                            lineHeight = 14.sp,
+                            modifier = Modifier.widthIn(max = 500.dp),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
 
                 }
 
