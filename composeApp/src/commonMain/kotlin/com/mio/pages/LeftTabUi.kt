@@ -39,7 +39,11 @@ private val leftList = listOf(
 
 
 @Composable
-fun LeftTabUi(modifier: Modifier) {
+fun LeftTabUi(
+    modifier: Modifier = Modifier.width(200.dp)
+        .fillMaxHeight()
+        .background(Color(0xfff0f3f6)),
+) {
     Column(modifier = modifier) {
         TabTitleSubItemUi(
             modifier = Modifier.fillMaxWidth()

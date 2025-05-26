@@ -32,7 +32,10 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RightTop(modifier: Modifier) {
+fun RightTop(
+    modifier: Modifier = Modifier.fillMaxWidth()
+        .height(72.dp),
+) {
     val profile = AppHelper.profile.collectAsState()
 
     Row(

@@ -1,6 +1,7 @@
 package com.mio
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -11,38 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mio.Player.play
 import com.mio.pages.*
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import java.lang.ref.WeakReference
-
-@Suppress("CoroutineCreationDuringComposition")
-@Composable
-@Preview
-fun App() {
-    GlobalScope.launch {
-        Player.initPlayer()
-    }
-    val fileEncoding = System.getProperty("file.encoding")
-    println("Default file encoding: $fileEncoding")
-    GlobalScope.launch {
-        delay(10_000)
-        logcat("start play")
-//        play("http://m801.music.126.net/20250520161505/9011f11262a4d0711e9d1400010abcac/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28482149825/5032/13a7/4198/6a58ae33817499ac5699190e56d6379d.mp3?vuutv=1PYnX2esEo20KMVleAuDxAxqd4P0g/lZF3jtAthF3Lx0TWqMrUY7aq5t/JIl08FuGoGfbCFXRwuGxypLkVNd8xuqu7HTIzWEmd+jPI3/AJ8ikbEtb/b6JOhDjG2axxSEfXcUhqaLlTVcx2n6XiYiDQ9tt4lpkWi8u1wGjj+1mCU=")
-        play("C:\\Users\\36035\\Downloads\\【清唱】初华在浴室发布中文力作《小祥，我要把你关澡堂》！Imprisoned XII！.mp3")
-        delay(1_000)
-//        logcat("volume:${Player.getVolume()}")
-    }
-
-    MaterialTheme {
-        MainUi()
-    }
-}
 
 /**
  * 1.读取本地cookie 根据cookie获取登录状态
@@ -51,53 +24,75 @@ fun App() {
  * 4.未判断出是否登录状态之前 显示loading
  */
 @Composable
-fun MainUi() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        var hasJudgeLogin by remember { mutableStateOf(false) }
-        var startDestination by remember { mutableStateOf("recommend") }
-
-        LaunchedEffect(1) {
-            // 读取本地之前存的cookie
-            AppHelper.cookie.value = getString("cookie", "")
-            logcat("cookie: ${AppHelper.cookie.value}")
-
-            KtorHelper.loginStatus().collect {
-                logcat("${it.data?.code}${it.data?.account}\n${it.data?.profile}")
-
-                val hasLogin = it.code.isOk() && it.data?.account != null && it.data.profile != null
-
-                if (hasLogin) {
-                    AppHelper.account.value = it.data?.account
-                    AppHelper.profile.value = it.data?.profile
-                    toast("登录成功")
-                }
-                startDestination = if (hasLogin) "recommend" else "login"
-
-                AppHelper.isLogin.value = hasLogin
-                hasJudgeLogin = true
-            }
+fun App(
+    leftTabUi: @Composable (Modifier) -> Unit = { LeftTabUi(it) },
+    rightTopUi: @Composable (Modifier) -> Unit = { RightTop(it) },
+) {
+    MaterialTheme {
+        LaunchedEffect(Unit) {
+            Player.initPlayer()
         }
 
-        AppContainer(hasJudgeLogin, startDestination)
+        Box(modifier = Modifier.fillMaxSize()) {
+            var hasJudgeLogin by remember { mutableStateOf(false) }
+            var startDestination by remember { mutableStateOf("recommend") }
 
-        // 其他内容 一般用于页面上物
+            LaunchedEffect(1) {
+                // 读取本地之前存的cookie
+                AppHelper.cookie.value = getString("cookie", "")
+                logcat("cookie: ${AppHelper.cookie.value}")
 
-        // 播放器
-        PlayerUi(
-            modifier = Modifier.fillMaxSize()
-        )
+                KtorHelper.loginStatus().collect {
+                    logcat("${it.data?.code}${it.data?.account}\n${it.data?.profile}")
+
+                    val hasLogin = it.code.isOk() && it.data?.account != null && it.data.profile != null
+
+                    if (hasLogin) {
+                        AppHelper.account.value = it.data?.account
+                        AppHelper.profile.value = it.data?.profile
+                        toast("登录成功")
+                    }
+                    startDestination = if (hasLogin) "recommend" else "login"
+
+                    AppHelper.isLogin.value = hasLogin
+                    hasJudgeLogin = true
+                }
+            }
+
+            AppContainer(
+                hasJudgeLogin, startDestination,
+                leftTabUi = leftTabUi,
+                rightTopUi = rightTopUi,
+            ) {
+                // 页面内容
+                NavContent(hasJudgeLogin, startDestination)
+            }
+
+            // 其他内容 一般用于页面上物
+
+            // 播放器
+            PlayerUi(
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
 @Composable
-fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
+fun AppContainer(
+    hasJudgeLogin: Boolean,
+    startDestination: String,
+    leftTabUi: @Composable (Modifier) -> Unit = { LeftTabUi(it) },
+    rightTopUi: @Composable (Modifier) -> Unit = { RightTop(it) },
+    content: @Composable (Modifier) -> Unit = { NavContent(hasJudgeLogin, startDestination) },
+) {
     Row(
         modifier = Modifier.fillMaxSize()
             .padding(bottom = 80.dp), // todo 这里先固定给mini player让一个位置 后续改成根据播放器状态来让位置
     ) {
         // 左侧tab
-        LeftTabUi(
-            modifier = Modifier.width(200.dp)
+        leftTabUi(
+            Modifier.width(200.dp)
                 .fillMaxHeight()
                 .background(Color(0xfff0f3f6))
         )
@@ -109,14 +104,15 @@ fun AppContainer(hasJudgeLogin: Boolean, startDestination: String) {
                 .background(Color(0xfff7f9fc))
         ) {
             // 顶部区域 搜索 头像 等
-            RightTop(
-                modifier = Modifier.fillMaxWidth()
+
+            rightTopUi(
+                Modifier.fillMaxWidth()
                     .height(72.dp)
             )
 
             // 内容区域
             // 页面导航
-            NavContent(hasJudgeLogin, startDestination)
+            content(Modifier)
         }
     }
 }
@@ -153,7 +149,7 @@ fun NavigationComponent(startDestination: String) {
 //                exitTransition = { ExitTransition.None },
 //                popEnterTransition = { EnterTransition.None },
 //                popExitTransition = { ExitTransition.None },
-                ) {
+            ) {
                 RecommendUi(this@composable)
             }
             composable(
