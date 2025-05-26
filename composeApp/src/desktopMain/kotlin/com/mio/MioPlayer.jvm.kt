@@ -15,7 +15,7 @@ actual object MioPlayer {
         val vlcLibPath = "$appDir/src/desktopMain/kotlin/libs/vlcLib"  // 这样写只支持调试的时候运行 打包产物后续考虑是否先把资源拷贝
         System.setProperty("jna.library.path", vlcLibPath)
         mediaPlayer = MediaPlayerFactory().mediaPlayers().newMediaPlayer()
-        logcat("vlcj init over...")
+        logcat("vlcj init")
     }
 
     actual fun play(url: String) {
@@ -33,6 +33,14 @@ actual object MioPlayer {
 
     actual fun stop() {
         mediaPlayer.controls().stop()
+    }
+
+    actual fun getVolume(): Int {
+        return mediaPlayer.audio().volume()
+    }
+
+    actual fun setVolume(volume: Int) {
+        mediaPlayer.audio().setVolume(volume)
     }
 
     actual fun release() {

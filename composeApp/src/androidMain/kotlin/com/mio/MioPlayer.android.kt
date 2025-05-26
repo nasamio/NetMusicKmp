@@ -18,4 +18,11 @@ actual object MioPlayer {
 
     }
 
+    actual fun getVolume(): Int {
+        return 0
+    }
+
+    actual fun setVolume(volume: Int) {
+    }
+
 }

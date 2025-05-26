@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Slider
 import androidx.compose.material.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
@@ -17,11 +15,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import coil3.compose.AsyncImage
@@ -31,12 +27,7 @@ import com.mio.components.VerticalVolumeSlider
 import com.mio.logcat
 import com.mio.utils.toMinAndSecStr
 import netmusickmp.composeapp.generated.resources.*
-import netmusickmp.composeapp.generated.resources.Res
-import netmusickmp.composeapp.generated.resources.ic_comment
-import netmusickmp.composeapp.generated.resources.ic_plus
 import org.jetbrains.compose.resources.painterResource
-import java.awt.Toolkit
-import java.time.format.TextStyle
 
 @Composable
 fun PlayerUi(modifier: Modifier) {
@@ -217,6 +208,8 @@ fun MiniCenter(modifier: Modifier) {
                     hoverTint = Color.White,
                     normalTint = Color.White,
                     onClick = {
+                        Player.pause()
+                        logcat("Player paused")
                     },
                 )
             }
@@ -298,6 +291,8 @@ fun MiniRight(modifier: Modifier, currentSong: SongResponse.Song?) {
                                 volume = volume.value,
                                 onVolumeChange = {
                                     Player.volume.value = it
+                                    Player.setVolume((it*100).toInt())
+                                    logcat("volumn: ${(it*100).toInt()}")
                                 },
                             )
                             Text(

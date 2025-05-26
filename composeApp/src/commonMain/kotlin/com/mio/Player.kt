@@ -55,15 +55,16 @@ object Player {
         } ?: run { logcat("Player play: empty id...") }
     }
 
-
-//    fun stop() = player.stop()
+    fun pause() = player.pause()
+    fun resume() = player.resume()
+    fun stop() = player.stop()
     fun release() = player.release()
 //
 //    // play state只有在播放的时候才有值 音量默认为1.0
-//    fun getVolume() = player.currentVolume()
-//    fun setVolume(volume: Float) {
-//        player.setVolume(volume)
-//    }
+    fun getVolume() = player.getVolume()
+    fun setVolume(volume: Int) {
+        player.setVolume(volume)
+    }
 //
 //
 //    fun test() {

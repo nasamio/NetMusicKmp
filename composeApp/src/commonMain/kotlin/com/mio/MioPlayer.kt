@@ -12,6 +12,8 @@ expect object MioPlayer {
     fun resume()
     fun stop()
     fun release()
+    fun getVolume(): Int
+    fun setVolume(volume: Int)
 
     // 监听
     fun addListener(
