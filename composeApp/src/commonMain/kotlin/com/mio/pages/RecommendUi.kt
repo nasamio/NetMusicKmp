@@ -2,6 +2,7 @@
 
 package com.mio.pages
 
+import HoveredIcon
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,13 +29,17 @@ import coil3.BitmapImage
 import coil3.compose.AsyncImage
 import com.kmpalette.palette.graphics.Palette
 import com.mio.*
+import com.mio.bean.SongResponse
 import com.mio.components.FastSharedBounds
+import com.mio.utils.KtorHelper
+import com.mio.utils.isOk
 import hoverListener
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import netmusickmp.composeapp.generated.resources.Res
 import netmusickmp.composeapp.generated.resources.ic_music
+import netmusickmp.composeapp.generated.resources.ic_play
 import org.jetbrains.compose.resources.*
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -86,7 +91,8 @@ fun SharedTransitionScope.RecommendItemUi(
         ) {
             itemsIndexed(data.list) { index, item ->
                 var hovered by remember { mutableStateOf(false) }
-                var shape = remember { mutableStateOf(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)) }
+                var shape =
+                    remember { mutableStateOf(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)) }
 
                 PlayListItem(
                     modifier = Modifier
@@ -112,15 +118,27 @@ fun SharedTransitionScope.RecommendItemUi(
 @Composable
 fun SharedTransitionScope.PlayListItem(
     modifier: Modifier = Modifier,
-    data: SongList,
+    data: SongList, // 对应一个专辑
     animScope: AnimatedContentScope,
     shape: RoundedCornerShape,
 ) {
-    logcat("RecommendUI PlayListItem data:${data}")
+//    logcat("RecommendUI PlayListItem data:${data}")
+    val scope = rememberCoroutineScope()
     var dominaColor by remember { mutableStateOf<Color?>(null) }
+    var hovered by remember { mutableStateOf(false) }
+    var songs by remember { mutableStateOf<List<SongResponse.Song>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        KtorHelper.getSongs(data.id.toString()).collect {
+            println("获取到的歌曲数量: ${it.songs.size}")
+            if (it.code?.isOk() == true) {
+                songs = it.songs
+            }
+        }
+    }
 
     Box(
-        modifier = modifier
+        modifier = modifier.hoverListener { hovered = it }
     ) {
         Column(
             modifier = Modifier.width(140.dp)
@@ -146,7 +164,8 @@ fun SharedTransitionScope.PlayListItem(
                     contentScale = ContentScale.Crop,
                     onSuccess = { success ->
                         // 解析图片，提取主色用于底部背景
-                        val bitmap = (success.result.image as BitmapImage).bitmap.asComposeImageBitmap()
+                        val bitmap =
+                            (success.result.image as BitmapImage).bitmap.asComposeImageBitmap()
                         GlobalScope.launch {
                             bitmap.let {
                                 Palette.from(it)
@@ -155,7 +174,8 @@ fun SharedTransitionScope.PlayListItem(
                                     ?.rgb
                                     .let {
 //                                logcat("color2:$it")
-                                        dominaColor = it?.toLong()?.let { it1 -> darkenColor(Color(it1)) }
+                                        dominaColor =
+                                            it?.toLong()?.let { it1 -> darkenColor(Color(it1)) }
                                     }
                             }
                         }
@@ -209,6 +229,26 @@ fun SharedTransitionScope.PlayListItem(
                 // 行高
                 lineHeight = 12.sp,
             )
+        }
+
+        // 右下角 播放按钮
+        AnimatedVisibility(
+            visible = hovered,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = modifier.align(Alignment.BottomEnd)
+                .padding(bottom = 4.dp, end = 4.dp)
+        ) {
+
+            HoveredIcon(
+                painter = painterResource(Res.drawable.ic_play),
+                modifier = Modifier.size(24.dp),
+                hoverTint = Color.White,
+                normalTint = Color.White,
+            ) {
+                if (songs.isNotEmpty()) scope.launch { Player.play(songs) }
+                else println("未获取到歌曲(${data.id})")
+            }
         }
     }
 }

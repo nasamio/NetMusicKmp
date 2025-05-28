@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,10 +54,13 @@ fun PlayerUi(modifier: Modifier) {
     }
 }
 
+@Suppress("StateFlowValueCalledInComposition")
 @Composable
 fun MiniPlayer(modifier: Modifier) {
     val currentIndex = Player.currentIndex.collectAsState()
-    val currentSong = Player.playList.value.let { if (it.isEmpty()) null else it[currentIndex.value] }
+    val currentSong =
+        Player.playList.value.let { if (it.isEmpty()) null else it[currentIndex.value] }
+    val currentState = Player.playerState.collectAsState()
 
     logcat("url:${currentSong?.al?.picUrl}")
 
@@ -72,7 +76,7 @@ fun MiniPlayer(modifier: Modifier) {
 
 
         // 播放器操作
-        MiniCenter(modifier = Modifier.align(Alignment.Center))
+        MiniCenter(modifier = Modifier.align(Alignment.Center), currentState = currentState.value)
 
 
         // 右侧菜单
@@ -169,9 +173,10 @@ fun MiniLeft(modifier: Modifier, currentSong: SongResponse.Song?) {
 }
 
 @Composable
-fun MiniCenter(modifier: Modifier) {
+fun MiniCenter(modifier: Modifier, currentState: Player.PlayState) {
     val current = Player.currentDuration.collectAsState()
     val total = Player.totalDuration.collectAsState()
+    val progress = Player.progress.collectAsState()
 
     Column(
         modifier = modifier,
@@ -192,6 +197,7 @@ fun MiniCenter(modifier: Modifier) {
                 painter = painterResource(Res.drawable.ic_previous),
                 modifier = Modifier.size(20.dp),
                 onClick = {
+                    Player.previous()
                 }
             )
             Spacer(Modifier.width(margin))
@@ -202,14 +208,23 @@ fun MiniCenter(modifier: Modifier) {
                 contentAlignment = Alignment.Center,
             ) {
                 HoveredIcon(
-                    painter = painterResource(Res.drawable.ic_play),
+                    painter = painterResource(
+                        when (currentState) {
+                            is Player.PlayState.Paused -> Res.drawable.ic_play
+                            is Player.PlayState.Playing -> Res.drawable.ic_pause
+                            else -> Res.drawable.ic_local
+                        }
+                    ),
                     modifier = Modifier.size(36.dp),
                     hoverColor = Color.White,
                     hoverTint = Color.White,
                     normalTint = Color.White,
                     onClick = {
-                        Player.pause()
-                        logcat("Player paused")
+                        when (currentState) {
+                            is Player.PlayState.Paused -> Player.resume()
+                            is Player.PlayState.Playing -> Player.pause()
+                            else -> {}
+                        }
                     },
                 )
             }
@@ -218,6 +233,7 @@ fun MiniCenter(modifier: Modifier) {
                 painter = painterResource(Res.drawable.ic_next),
                 modifier = Modifier.size(20.dp),
                 onClick = {
+                    Player.playNext()
                 }
             )
             Spacer(Modifier.width(margin))
@@ -244,10 +260,15 @@ fun MiniCenter(modifier: Modifier) {
             )
             Spacer(Modifier.width(margin))
             // 进度条
-            LinearProgressIndicator(
+            Slider(
                 modifier = Modifier.width(300.dp)
-                    .height(2.dp)
+                    .height(1.dp),
+                value = progress.value,
+                onValueChange = {
+                    Player.seekTo((total.value * it).toLong())
+                },
             )
+
             Spacer(Modifier.width(margin))
             Text(
                 text = total.value.toMinAndSecStr(),
@@ -277,7 +298,10 @@ fun MiniRight(modifier: Modifier, currentSong: SongResponse.Song?) {
                 }
             )
             if (isVolumeVisible) {
-                Popup(alignment = Alignment.TopCenter, offset = androidx.compose.ui.unit.IntOffset(0, -160)) {
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    offset = androidx.compose.ui.unit.IntOffset(0, -160)
+                ) {
                     Surface(
                         modifier = Modifier.wrapContentSize().padding(8.dp),
                         shape = RoundedCornerShape(8.dp),
@@ -291,8 +315,8 @@ fun MiniRight(modifier: Modifier, currentSong: SongResponse.Song?) {
                                 volume = volume.value,
                                 onVolumeChange = {
                                     Player.volume.value = it
-                                    Player.setVolume((it*100).toInt())
-                                    logcat("volumn: ${(it*100).toInt()}")
+                                    Player.setVolume((it * 100).toInt())
+                                    logcat("volumn: ${(it * 100).toInt()}")
                                 },
                             )
                             Text(

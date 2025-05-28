@@ -189,7 +189,7 @@ object KtorHelper {
             "id" to id,
             "timestamp" to System.currentTimeMillis().toString(),
             "cookie" to AppHelper.cookie.value,
-            "br" to "320000",
+            "br" to "320000", // 码率 高了会播放不出来
         ),
     )
 

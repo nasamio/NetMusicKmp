@@ -199,7 +199,7 @@ fun SharedTransitionScope.PlayListDetailUi(id: String?, animScope: AnimatedConte
         Box(
             modifier = Modifier.fillMaxWidth()
                 .height(200.dp)
-                .background(Color.Blue)
+//                .background(Color.Blue)
         )
     }
 }

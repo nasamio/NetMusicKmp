@@ -23,4 +23,14 @@ expect object MioPlayer {
         onEnd: () -> Unit, // 播放结束
         onError: () -> Unit,
     )
+
+    // 获取当前播放总时长 ms
+    fun getTotal(): Long
+
+    // 获取当前播放进度 ms
+    fun getCurrent(): Long
+
+    // 获取当前进度百分比
+    fun getProgress(): Float
+
 }

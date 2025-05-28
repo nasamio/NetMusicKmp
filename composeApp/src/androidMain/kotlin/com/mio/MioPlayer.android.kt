@@ -25,4 +25,13 @@ actual object MioPlayer {
     actual fun setVolume(volume: Int) {
     }
 
+    actual fun getTotal(): Long {
+        return 0L
+    }
+    actual fun getCurrent(): Long {
+        return 0L
+    }
+    actual fun getProgress(): Float {
+        return 1f
+    }
 }

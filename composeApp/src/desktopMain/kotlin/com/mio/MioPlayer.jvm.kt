@@ -88,4 +88,13 @@ actual object MioPlayer {
         get() = TODO("Not yet implemented")
         set(value) {}
 
+    actual fun getTotal(): Long {
+        return mediaPlayer.status().length()
+    }
+    actual fun getCurrent(): Long {
+        return mediaPlayer.status().time()
+    }
+    actual fun getProgress(): Float {
+        return mediaPlayer.status().position()
+    }
 }

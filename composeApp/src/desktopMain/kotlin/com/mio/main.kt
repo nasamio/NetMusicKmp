@@ -22,7 +22,10 @@ fun main() = application {
         transparent = true,
         state = WindowState(
             size = DpSize(1056.dp, 752.dp),
-            position = WindowPosition.Aligned(Alignment.Center)  // 这里设置窗口居中
+            position = WindowPosition.Absolute(
+                (1920 + 1920 / 2 - 1056 / 2).dp,
+                (1080 / 2 - 752 / 2).dp
+            ),
         ),
     ) {
         App(
