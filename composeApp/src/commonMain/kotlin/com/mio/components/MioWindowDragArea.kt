@@ -33,8 +33,9 @@ fun WindowScope.MioWindowDragArea(
     var dragStartWindowPos by remember { mutableStateOf(Offset.Zero) }
     var dragStartMousePos by remember { mutableStateOf(Offset.Zero) }
 
-    var targetPos by remember { mutableStateOf(Offset(window.x.toFloat(), window.y.toFloat())) }
-    var previousTargetPos by remember { mutableStateOf(targetPos) }
+    // 这里初始时只保存 window 位置，不赋值给 targetPos，targetPos 初始为 null 表示未开始拖拽
+    var targetPos by remember { mutableStateOf<Offset?>(null) }
+    var previousTargetPos by remember { mutableStateOf<Offset?>(null) }
 
     val animX = remember { Animatable(window.x.toFloat()) }
     val animY = remember { Animatable(window.y.toFloat()) }
@@ -50,16 +51,21 @@ fun WindowScope.MioWindowDragArea(
     }
 
     LaunchedEffect(targetPos, isDragging) {
+        if (targetPos == null) {
+            // 初始状态，什么都不做，避免一开始就设置窗口位置
+            return@LaunchedEffect
+        }
+
         if (isDragging) {
             // 拖拽中，立刻设置位置，不动画
-            coroutineScope.launch { animX.snapTo(targetPos.x) }
-            coroutineScope.launch { animY.snapTo(targetPos.y) }
+            coroutineScope.launch { animX.snapTo(targetPos!!.x) }
+            coroutineScope.launch { animY.snapTo(targetPos!!.y) }
         } else {
             if (enableReleaseAnimation) {
                 // 拖拽结束且开启动画，做弹性动画
                 coroutineScope.launch {
                     animX.animateTo(
-                        targetPos.x,
+                        targetPos!!.x,
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
                             stiffness = Spring.StiffnessLow
@@ -68,7 +74,7 @@ fun WindowScope.MioWindowDragArea(
                 }
                 coroutineScope.launch {
                     animY.animateTo(
-                        targetPos.y,
+                        targetPos!!.y,
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
                             stiffness = Spring.StiffnessLow
@@ -77,14 +83,17 @@ fun WindowScope.MioWindowDragArea(
                 }
             } else {
                 // 拖拽结束且关闭动画，立刻定位，不动画
-                coroutineScope.launch { animX.snapTo(targetPos.x) }
-                coroutineScope.launch { animY.snapTo(targetPos.y) }
+                coroutineScope.launch { animX.snapTo(targetPos!!.x) }
+                coroutineScope.launch { animY.snapTo(targetPos!!.y) }
             }
         }
     }
 
     LaunchedEffect(animX.value, animY.value) {
-        window.setLocation(animX.value.roundToInt(), animY.value.roundToInt())
+        // 只有在有拖拽相关的 targetPos 时才设置窗口位置，避免初始时干扰
+        if (targetPos != null) {
+            window.setLocation(animX.value.roundToInt(), animY.value.roundToInt())
+        }
     }
 
     Box(
@@ -93,20 +102,22 @@ fun WindowScope.MioWindowDragArea(
                 while (true) {
                     val down = awaitPointerEventScope { awaitFirstDown(requireUnconsumed = false) }
                     if (down.isConsumed) {
-                        // 内部组件消费了按压事件，不触发拖拽，继续循环等待下一次触摸
                         continue
                     }
                     isDragging = true
                     dragStartWindowPos = Offset(window.x.toFloat(), window.y.toFloat())
                     dragStartMousePos = getGlobalMousePosition()
+                    // 拖拽开始时，初始化 targetPos、previousTargetPos 为当前窗口位置
+                    targetPos = dragStartWindowPos
+                    previousTargetPos = dragStartWindowPos
 
                     awaitPointerEventScope {
                         drag(down.id) { change ->
-                            change.consume() // 消费拖拽事件，避免其他手势响应干扰
+                            change.consume()
                             val currentMousePos = getGlobalMousePosition()
                             val delta = currentMousePos - dragStartMousePos
                             val newPos = dragStartWindowPos + delta
-                            if ((newPos - previousTargetPos).getDistance() > threshold) {
+                            if (previousTargetPos == null || (newPos - previousTargetPos!!).getDistance() > threshold) {
                                 targetPos = newPos
                                 previousTargetPos = newPos
                             }

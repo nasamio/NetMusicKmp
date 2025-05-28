@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mio.components.StateContainer
+import com.mio.components.UiState
 import com.mio.pages.*
 import com.mio.utils.KtorHelper
 import com.mio.utils.isOk
@@ -33,8 +35,10 @@ fun App(
             Player.initPlayer()
         }
 
+
         Box(modifier = Modifier.fillMaxSize()) {
-            var hasJudgeLogin by remember { mutableStateOf(false) }
+            var uiState by remember { mutableStateOf<UiState>(UiState.Loading) }
+
             var startDestination by remember { mutableStateOf("recommend") }
 
             LaunchedEffect(1) {
@@ -55,17 +59,21 @@ fun App(
                     startDestination = if (hasLogin) "recommend" else "login"
 
                     AppHelper.isLogin.value = hasLogin
-                    hasJudgeLogin = true
+                    uiState = UiState.Content
                 }
             }
 
-            AppContainer(
-                hasJudgeLogin, startDestination,
-                leftTabUi = leftTabUi,
-                rightTopUi = rightTopUi,
+            StateContainer(
+                state = uiState,
             ) {
-                // 页面内容
-                NavContent(hasJudgeLogin, startDestination)
+                AppContainer(
+                    startDestination,
+                    leftTabUi = leftTabUi,
+                    rightTopUi = rightTopUi,
+                ) {
+                    // 页面内容
+                    NavContent(startDestination)
+                }
             }
 
             // 其他内容 一般用于页面上物
@@ -80,11 +88,10 @@ fun App(
 
 @Composable
 fun AppContainer(
-    hasJudgeLogin: Boolean,
     startDestination: String,
     leftTabUi: @Composable (Modifier) -> Unit = { LeftTabUi(it) },
     rightTopUi: @Composable (Modifier) -> Unit = { RightTop(it) },
-    content: @Composable (Modifier) -> Unit = { NavContent(hasJudgeLogin, startDestination) },
+    content: @Composable (Modifier) -> Unit = { NavContent(startDestination) },
 ) {
     Row(
         modifier = Modifier.fillMaxSize()
@@ -121,14 +128,8 @@ fun AppContainer(
  * 导航区域
  */
 @Composable
-fun NavContent(showContent: Boolean, startDestination: String) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (showContent) {
-            NavigationComponent(startDestination)
-        } else {
-            LoadingUi()
-        }
-    }
+fun NavContent(startDestination: String) {
+    NavigationComponent(startDestination)
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)

@@ -31,7 +31,7 @@ data class Subscriber(
     @SerialName("backgroundImgIdStr")
     val backgroundImgIdStr: String = "",
     @SerialName("backgroundUrl")
-    val backgroundUrl: String = "",
+    val backgroundUrl: String? = null,
     @SerialName("birthday")
     val birthday: Int = 0,
     @SerialName("city")

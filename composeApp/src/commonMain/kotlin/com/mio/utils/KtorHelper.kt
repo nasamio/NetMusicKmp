@@ -144,10 +144,10 @@ object KtorHelper {
 
 
 
-    fun getSongs(songId: String) = get<SongResponse>(
+    fun getSongs(playlistId: String) = get<SongResponse>(
         url = "/playlist/track/all",
         params = mapOf(
-            "id" to songId.toString(),
+            "id" to playlistId,
             "timestamp" to System.currentTimeMillis().toString(),
             "cookie" to AppHelper.cookie.value,
         ),

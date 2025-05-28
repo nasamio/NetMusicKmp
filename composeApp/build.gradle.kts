@@ -85,6 +85,10 @@ kotlin {
             implementation("org.openjfx:javafx-swing:19:${fxSuffix}")
             implementation("org.openjfx:javafx-web:19:${fxSuffix}")
             implementation("org.openjfx:javafx-media:19:${fxSuffix}")
+
+            implementation( "net.java.dev.jna:jna:5.13.0"         )   // JNA核心库
+            implementation("net.java.dev.jna:jna-platform:5.13.0")   // 包含WindowUtils等平台相关工具
+
         }
     }
 }

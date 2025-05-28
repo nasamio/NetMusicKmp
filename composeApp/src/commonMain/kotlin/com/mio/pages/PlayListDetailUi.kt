@@ -45,6 +45,10 @@ fun SharedTransitionScope.PlayListDetailUi(id: String?, animScope: AnimatedConte
                 playlist = it.playlist
             }
         }
+
+        KtorHelper.getSongs(id.toString()).collect {
+            println("获取到的歌曲数量: ${it.songs.size}")
+        }
     }
 
     Column(
@@ -190,5 +194,12 @@ fun SharedTransitionScope.PlayListDetailUi(id: String?, animScope: AnimatedConte
                 }
             }
         }
+
+        Spacer(Modifier.height(20.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .height(200.dp)
+                .background(Color.Blue)
+        )
     }
 }
